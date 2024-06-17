@@ -23,5 +23,5 @@
 - Think about project evaluation strategies
 
 **Next meeting**
-- Date:** 2024-05-30
-- Time:** 16:00 - 16:30
+- Date: 2024-05-30
+- Time: 16:00 - 16:30

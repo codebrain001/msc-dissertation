@@ -22,5 +22,5 @@
 - Conduct experiments in both fine-tuning and LLM agent development.
 
 **Next meeting**
-- Date:** 2024-06-17
-- Time:** 10:30 - 11:00
+- Date: 2024-06-17
+- Time: 10:30 - 11:00
