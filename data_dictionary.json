@@ -1,0 +1,15 @@
+{
+  "attribute_name": "StudentID",
+  "description": "A unique identifier for each student",
+  "data_type": "Integer",
+  "maximum_length": 10,
+  "minimum_length": 1,
+  "allowed_values": "Any integer between 1 and 9999999999",
+  "nullable": false,
+  "default_value": null,
+  "constrainst": "Primary Key, Must be unique",
+  "related_to": [
+    "Enrollment.StudentID",
+    "Grades.StudentID"
+  ]
+}
