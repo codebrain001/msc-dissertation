@@ -90,14 +90,14 @@ class InputExtractionTools:
             logging.error(f"Error creating Chroma DB collection: {e}")
             return None
 
-    def create_summary_index(self):
+    def create_summary_index(self, collection_name='msc-dissertation-001-input-summary'):
         """
         Create a summary index for the loaded documents.
         """
         try:
             summary_vector_store_instance = self.create_chroma_db_collection(
                 self.chroma_client,
-                'msc-dissertation-001-input-summary'
+                collection_name
             )
             summary_storage_context = StorageContext.from_defaults(vector_store=summary_vector_store_instance)
             response_synthesizer = get_response_synthesizer(
@@ -118,14 +118,14 @@ class InputExtractionTools:
             logging.error(f"Error creating summary index: {e}")
             return None
 
-    def create_vector_store_index(self):
+    def create_vector_store_index(self, collection_nmae='msc-dissertation-001-input-semantic-search'):
         """
         Create a vector store index for semantic search.
         """
         try:
             semantic_search_vector_store_instance = self.create_chroma_db_collection(
                 self.chroma_client,
-                'msc-dissertation-001-input-semantic-search'
+                collection_nmae
             )
             semantic_search_storage_context = StorageContext.from_defaults(vector_store=semantic_search_vector_store_instance)
             vector_store_index = VectorStoreIndex.from_documents(
@@ -152,12 +152,12 @@ class InputExtractionTools:
             self.summary_tool = LlamaIndexTool.from_query_engine(
                 self.summary_query_engine,
                 name="Summary Index Query Tool",
-                description="Use this tool to query over the uploaded preliminary documents using the summary index."
+                description="Use this tool to query summaries over the given document(s)."
             )
             self.vector_store_tool = LlamaIndexTool.from_query_engine(
                 self.vector_store_query_engine,
                 name="Vector Store Index Query Tool",
-                description="Use this tool to query over the uploaded preliminary documents using the vector store index."
+                description="Use this tool to semantic search over the given document(s)."
             )
             return self.summary_tool, self.vector_store_tool
         except Exception as e:
