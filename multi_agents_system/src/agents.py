@@ -15,12 +15,8 @@ class Agents():
         self.youtube_video_search_tool = self.search_and_scrape_tools.create_youtube_video_search_tool()
         self.market_data_extraction_search_tool = self.search_and_scrape_tools.create_market_data_extraction_search_tool()
         self.compliance_tools = compliance_tools
-        self.gdpr_summary_tool = self.compliance_tools.create_GDPR_summary_tool()
-        self.gdpr_quick_access_reference_tool = self.compliance_tools.create_GDPR_quick_access_reference_tool()
-        self.gdpr_semantic_search_tool = self.compliance_tools.create_GDPR_semantic_search_tool()
-
-
-
+        self.gdpr_summary_tool = self.compliance_tools.gdpr_summary_tool
+        self.gdpr_semantic_search_tool = self.compliance_tools.gdpr_semantic_search_tool
 
     def preliminary_requirement_profiling_agent(self):
         return Agent(
@@ -63,7 +59,6 @@ class Agents():
             ),
             tools=[
                 self.gdpr_summary_tool,
-                self.gdpr_quick_access_reference_tool,
                 self.gdpr_semantic_search_tool
             ],
             verbose=True,
