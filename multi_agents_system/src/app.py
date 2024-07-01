@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 
 def setup_page():
     # Add page title, page icon, and wide layout
@@ -22,9 +23,9 @@ def sidebar_configuration():
     api_key = st.sidebar.text_input("Enter your API key", type="password")
     return selected_llm, api_key
 
-def load_preliminary_documents():
+def upload_preliminary_documents():
     st.title("Requirement Analysis and Specification with LLM Agents")
-    st.info("Upload Preliminary Documents",  icon="ℹ️")
+    st.info("Upload Preliminary Meeting Documents",  icon="ℹ️")
     uploaded_files = st.file_uploader(
         "Choose documents",
         type=["doc", "docx", "txt", "pdf", "mp4", "mp3"],
@@ -32,15 +33,19 @@ def load_preliminary_documents():
     )
 
     if uploaded_files:
-        for uploaded_file in uploaded_files:
-            st.write(f"Uploaded: {uploaded_file.name}")
+        save_uploaded_files_path = "./multi_agents_system/src/tools/data/inputs/"
+        os.makedirs(save_uploaded_files_path, exist_ok=True)
 
-    return uploaded_files
+        for uploaded_file in uploaded_files:
+            file_path = os.path.join(save_uploaded_files_path, uploaded_file.name)
+            with open(file_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            st.write(f"Uploaded and saved: {uploaded_file.name}")
 
 def main():
     setup_page()
     selected_llm, api_key = sidebar_configuration()
-    uploaded_files = load_preliminary_documents()
+    uploaded_files = upload_preliminary_documents()
 
     if uploaded_files:
         st.write("Files uploaded successfully. Proceed with processing...")
