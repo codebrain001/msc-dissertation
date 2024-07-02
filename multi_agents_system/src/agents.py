@@ -1,9 +1,6 @@
 from crewai import Agent
 from tools.input_extraction_tools import InputExtractionTools
 from tools.search_and_scrape_tools import SearchAndScrapeTools
-import re
-import streamlit as st
-
 
 class Agents():
     def __init__(self, input_extraction_tools, search_and_scrape_tools, compliance_tools):
@@ -62,6 +59,7 @@ class Agents():
                 self.gdpr_semantic_search_tool
             ],
             verbose=True,
+            allow_delegation=True,
         )
 
     def requirement_development_agent(self):
@@ -77,6 +75,7 @@ class Agents():
                    self.scrape_tool,
             ],
             verbose=True,
+            allow_delegation=True,
         )
 
     def data_dictionary_agent(self):
@@ -125,4 +124,5 @@ class Agents():
                    self.scrape_tool,
             ],
             verbose=True,
+            allow_delegation=True,
         )

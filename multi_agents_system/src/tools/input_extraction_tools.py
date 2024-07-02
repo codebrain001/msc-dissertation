@@ -83,12 +83,12 @@ class InputExtractionTools:
         Create a Chroma DB collection for storing vectors.
         """
         try:
-            chroma_collection = chroma_client.create_collection(collection_name)
+            chroma_collection = chroma_client.create_collection(name=collection_name)
             vector_store_instance = ChromaVectorStore(chroma_collection=chroma_collection)
             return vector_store_instance
         except Exception as e:
-            logging.error(f"Error creating Chroma DB collection: {e}")
-            return None
+                logging.error(f"Error creating Chroma DB collection: {e}")
+                return None
 
     def create_summary_index(self, collection_name='msc-dissertation-001-input-summary'):
         """
