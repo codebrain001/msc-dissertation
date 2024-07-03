@@ -98,7 +98,7 @@ class InputExtractionTools:
             logging.error(f"Error creating or loading Chroma DB collection: {e}")
             return None
 
-    def create_summary_index(self, collection_name, load_collection_status):
+    def create_summary_index(self, collection_name='msc-dissertation-001-input-summary', load_collection_status=False):
         """
         Create or load a summary index for the loaded documents.
         """
@@ -131,7 +131,7 @@ class InputExtractionTools:
             logging.error(f"Error creating or loading summary index: {e}")
             return None
 
-    def create_vector_store_index(self, collection_name, load_collection_status):
+    def create_vector_store_index(self, collection_name='msc-dissertation-001-input-semantic-search', load_collection_status=False):
         """
         Create a vector store index for semantic search.
         """
