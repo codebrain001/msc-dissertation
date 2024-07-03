@@ -13,8 +13,12 @@ import chromadb
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.llms.openai import OpenAI
 from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.llms.mistralai import MistralAI
+from llama_index.embeddings.mistralai import MistralAIEmbedding
 from crewai_tools import LlamaIndexTool
 
+
+from dotenv import load_dotenv
 import os
 import logging
 import sys
@@ -22,6 +26,12 @@ import nest_asyncio
 
 # Apply nest_asyncio to allow nested event loops
 nest_asyncio.apply()
+
+# Load environment variables
+dotenv_path = 'multi_agents_system/src/.env'
+load_dotenv(dotenv_path=dotenv_path)
+openai_api_key = os.getenv("OPENAI_API_KEY")
+mistral_api_key = os.getenv("MISTRAL_API_KEY")
 
 # Configure logging
 logging.basicConfig(stream=sys.stdout, level=logging.WARNING)
@@ -31,9 +41,8 @@ class InputExtractionTools:
     """
     Class for extracting input documents and creating a summarization and semantic search indices.
     """
-    def __init__(self, input_dir, llm_type='openai', model_name="gpt-3.5-turbo"):
+    def __init__(self, input_dir, model_name="gpt-3.5-turbo"):
         self.input_dir = input_dir
-        self.llm_type = llm_type
         self.model_name = model_name
         self.documents = self.load_documents()
         self.initialize_models()
@@ -58,13 +67,14 @@ class InputExtractionTools:
         Initialize LLM and embedding models based on the specified type.
         """
         try:
-            if self.llm_type == 'openai':
-                Settings.llm = OpenAI(model=self.model_name)
-                Settings.embed_model = OpenAIEmbedding()
-            elif self.llm_type == 'mistralai':
-                pass
+            if self.model_name in ["gpt-3.5-turbo", "gpt-4o"]:
+                Settings.llm = OpenAI(model_name=self.model_name, api_key=openai_api_key)
+                Settings.embed_model = OpenAIEmbedding(model_name='text-embedding-3-small', api_key=openai_api_key)
+            elif self.model_name in ["open-mixtral-8x22b", "mistral-medium"]:
+                Settings.llm = MistralAI(model_name=self.model_name, api_key=mistral_api_key)
+                Settings.embed_model = MistralAIEmbedding(model_name="mistral-embed", api_key=mistral_api_key)
             else:
-                raise ValueError(f"Unsupported LLM type: {self.llm_type}")
+                logging.error(f"Invalid LLM: {self.model_name}")
             self.splitter_strategy = SentenceSplitter()
         except Exception as e:
             logging.error(f"Error initializing models: {e}")
@@ -86,6 +96,18 @@ class InputExtractionTools:
         Create or load a Chroma DB collection for storing vectors.
         """
         try:
+            # Check the model name and add the appropriate suffix
+            if self.model_name in ["gpt-3.5-turbo", "gpt-4o"]:
+                collection_name_suffix = "openai"
+            elif self.model_name in ["open-mixtral-8x22b", "mistral-medium"]:
+                collection_name_suffix = "mistral"
+            else:
+                logging.error(f"Invalid model name: {self.model_name}")
+                return None
+
+            # Add the suffix to the collection name
+            collection_name = f"{collection_name}-{collection_name_suffix}"
+
             if load_collection_status:
                 chroma_collection = chroma_client.get_collection(name=collection_name)
                 logging.info(f"Loaded existing Chroma DB collection: {collection_name}")

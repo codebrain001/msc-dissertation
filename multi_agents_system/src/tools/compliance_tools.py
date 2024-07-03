@@ -15,8 +15,8 @@ class ComplianceTools(InputExtractionTools):
     """
     Class for compliance tools consisting of GDPR summary and semantic search index tools
     """
-    def __init__(self, input_dir, llm_type='openai', model_name="gpt-3.5-turbo"):
-        super().__init__(input_dir, llm_type, model_name)
+    def __init__(self, input_dir, model_name="gpt-3.5-turbo"):
+        super().__init__(input_dir, model_name)
         self.documents = self.load_documents()
         self.initialize_models()
         self.chroma_client = self.initialize_vector_store_client()
