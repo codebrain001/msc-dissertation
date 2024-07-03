@@ -1,20 +1,3 @@
-from llama_index.core import (
-    SimpleDirectoryReader,
-    DocumentSummaryIndex,
-    VectorStoreIndex,
-    StorageContext,
-    Settings,
-    get_response_synthesizer,
-    load_indices_from_storage
-)
-from llama_index.vector_stores.chroma import ChromaVectorStore
-import chromadb
-from llama_index.core.node_parser import SentenceSplitter
-from llama_index.llms.openai import OpenAI
-from llama_index.embeddings.openai import OpenAIEmbedding
-from crewai_tools import LlamaIndexTool
-
-import os
 import logging
 import sys
 import nest_asyncio
@@ -37,6 +20,6 @@ class ComplianceTools(InputExtractionTools):
         self.documents = self.load_documents()
         self.initialize_models()
         self.chroma_client = self.initialize_vector_store_client()
-        self.gdpr_summary_index = self.create_summary_index('gdpr-summary')
-        self.gdpr_semantic_search_index = self.create_vector_store_index('gdpr-semantic-search')
+        self.gdpr_summary_index = self.create_summary_index(collection_name='gdpr-summary', load_collection_status=False)
+        self.gdpr_semantic_search_index = self.create_vector_store_index(collection_name='gdpr-semantic-search', load_collection_status=False)
         self.gdpr_summary_tool, self.gdpr_semantic_search_tool = self.create_query_engine_tools()
