@@ -5,6 +5,12 @@ from crewai_tools import (
     YoutubeVideoSearchTool,
 )
 
+import os
+from dotenv import load_dotenv
+# Load environment variables
+dotenv_path = 'multi_agents_system/src/.env'
+load_dotenv(dotenv_path=dotenv_path)
+
 class SearchAndScrapeTools:
     """
     A class to initialize and manage various search and scraping tools.
