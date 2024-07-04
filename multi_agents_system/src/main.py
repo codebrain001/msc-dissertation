@@ -7,11 +7,10 @@ from crewai import  Crew
 
 if __name__ == "__main__":
     input_dir = "multi_agents_system/src/tools/data/inputs"
-    # persist_dir = './multi_agents_system/src/tools/local_storage'
-    input_extraction_tools = InputExtractionTools(input_dir=input_dir, llm_type='openai', model_name="gpt-3.5-turbo")
+    input_extraction_tools = InputExtractionTools(input_dir=input_dir, model_name="gpt-3.5-turbo")
     search_and_scrape_tools = SearchAndScrapeTools()
     gdpr_dir = 'multi_agents_system/src/tools/data/documents'
-    compliance_tools = ComplianceTools(input_dir=gdpr_dir, llm_type='openai', model_name="gpt-3.5-turbo")
+    compliance_tools = ComplianceTools(input_dir=gdpr_dir, model_name="gpt-3.5-turbo")
 
     # Initialize Agents with the input extraction tools
     agents = Agents(input_extraction_tools, search_and_scrape_tools, compliance_tools)
@@ -22,6 +21,7 @@ if __name__ == "__main__":
     data_dictionary_agent = agents.data_dictionary_agent()
     project_management_agent = agents.project_management_agent()
     quality_assurance_agent = agents.quality_assurance_agent()
+
 
     # Instantiate AgentTasks with the initialized agents
     agent_tasks = AgentTasks(
@@ -37,18 +37,18 @@ if __name__ == "__main__":
     # Create tasks
     preliminary_profiling_task = agent_tasks.create_preliminary_profiling_task()
     research_task = agent_tasks.create_research_task(preliminary_profiling_task)
-    compliance_task = agent_tasks.create_compliance_task(preliminary_profiling_task, research_task)
-    requirement_development_task = agent_tasks.create_requirement_development_task(preliminary_profiling_task, research_task, compliance_task)
-    data_dictionary_task = agent_tasks.create_data_dictionary_task(preliminary_profiling_task, research_task, compliance_task)
-    project_management_task = agent_tasks.create_project_management_task(requirement_development_task)
-    quality_assurance_task = agent_tasks.create_quality_assurance_task(requirement_development_task)
+    requirement_development_task = agent_tasks.create_requirement_development_task(preliminary_profiling_task, research_task)
+    compliance_task = agent_tasks.create_compliance_task(requirement_development_task)
+    data_dictionary_task = agent_tasks.create_data_dictionary_task(requirement_development_task, compliance_task)
+    project_management_task = agent_tasks.create_project_management_task(requirement_development_task, compliance_task)
+    quality_assurance_task = agent_tasks.create_quality_assurance_task(requirement_development_task, compliance_task)
 
     # Creating the crew
     requirement_analysis_and_specification_crew = Crew(
         agents=[preliminary_requirement_profiling_agent,
                 research_agent,
-                compliance_agent,
                 requirement_development_agent,
+                compliance_agent,
                 data_dictionary_agent,
                 project_management_agent,
                 quality_assurance_agent
@@ -56,8 +56,8 @@ if __name__ == "__main__":
         tasks=[
             preliminary_profiling_task,
             research_task,
-            compliance_task,
             requirement_development_task,
+            compliance_task,
             data_dictionary_task,
             project_management_task,
             quality_assurance_task
