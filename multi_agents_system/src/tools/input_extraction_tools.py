@@ -112,8 +112,14 @@ class InputExtractionTools:
                 chroma_collection = chroma_client.get_collection(name=collection_name)
                 logging.info(f"Loaded existing Chroma DB collection: {collection_name}")
             else:
-                chroma_collection = chroma_client.create_collection(name=collection_name)
-                logging.info(f"Created new Chroma DB collection: {collection_name}")
+                try:
+                    chroma_client.delete_collection(name=collection_name)
+                    logging.info(f"Deleted existing Chroma DB collection: {collection_name}")
+                except Exception as e:
+                    logging.warning(f"No existing collection {collection_name} to delete: {e}")
+                finally:
+                    chroma_collection = chroma_client.create_collection(name=collection_name)
+                    logging.info(f"Created new Chroma DB collection: {collection_name}")
             vector_store_instance = ChromaVectorStore(chroma_collection=chroma_collection)
             return vector_store_instance
         except Exception as e:
