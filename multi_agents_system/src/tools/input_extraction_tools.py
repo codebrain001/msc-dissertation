@@ -96,34 +96,11 @@ class InputExtractionTools:
         Create or load a Chroma DB collection for storing vectors.
         """
         try:
-            # Check the model name and add the appropriate suffix
-            if self.model_name in ["gpt-3.5-turbo", "gpt-4o"]:
-                collection_name_suffix = "openai"
-            elif self.model_name in ["open-mixtral-8x22b", "mistral-medium"]:
-                collection_name_suffix = "mistral"
-            else:
-                logging.error(f"Invalid model name: {self.model_name}")
-                return None
-
-            # Add the suffix to the collection name
-            collection_name = f"{collection_name}-{collection_name_suffix}"
-
-            if load_collection_status:
-                chroma_collection = chroma_client.get_collection(name=collection_name)
-                logging.info(f"Loaded existing Chroma DB collection: {collection_name}")
-            else:
-                try:
-                    chroma_client.delete_collection(name=collection_name)
-                    logging.info(f"Deleted existing Chroma DB collection: {collection_name}")
-                except Exception as e:
-                    logging.warning(f"No existing collection {collection_name} to delete: {e}")
-                finally:
-                    chroma_collection = chroma_client.create_collection(name=collection_name)
-                    logging.info(f"Created new Chroma DB collection: {collection_name}")
+            chroma_collection = chroma_client.create_collection(collection_name)
             vector_store_instance = ChromaVectorStore(chroma_collection=chroma_collection)
             return vector_store_instance
         except Exception as e:
-            logging.error(f"Error creating or loading Chroma DB collection: {e}")
+            logging.error(f"Error creating Chroma DB collection: {e}")
             return None
 
     def create_summary_index(self, collection_name='msc-dissertation-001-input-summary', load_collection_status=False):
