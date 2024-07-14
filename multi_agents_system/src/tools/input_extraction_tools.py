@@ -41,9 +41,10 @@ class InputExtractionTools:
     """
     Class for extracting input documents and creating a summarization and semantic search indices.
     """
-    def __init__(self, input_dir, model_name="gpt-3.5-turbo"):
+    def __init__(self, input_dir, model_name="gpt-3.5-turbo", load_collection_status=True):
         self.input_dir = input_dir
         self.model_name = model_name
+        self.load_collection_status = load_collection_status
         self.documents = self.load_documents()
         self.initialize_models()
         self.chroma_client = self.initialize_vector_store_client()
@@ -146,10 +147,13 @@ class InputExtractionTools:
             return None
 
 
-    def create_summary_index(self, collection_name='msc-dissertation-001-input-summary', load_collection_status=True):
+    def create_summary_index(self, collection_name='msc-dissertation-001-input-summary', load_collection_status=None):
         """
         Create a summary index for the loaded documents.
         """
+        if load_collection_status is None:
+            load_collection_status = self.load_collection_status
+
         try:
             logging.info(f"Creating or loading summary vector store with collection name: {collection_name}")
             summary_vector_store_instance = self.create_chroma_db_collection(
@@ -190,10 +194,13 @@ class InputExtractionTools:
             return None
 
 
-    def create_vector_store_index(self, collection_name='msc-dissertation-001-input-semantic-search', load_collection_status=True):
+    def create_vector_store_index(self, collection_name='msc-dissertation-001-input-semantic-search', load_collection_status=None):
         """
         Create a vector store index for semantic search.
         """
+        if load_collection_status is None:
+            load_collection_status = self.load_collection_status
+
         try:
             logging.info(f"Creating or loading semantic search vector store with collection name: {collection_name}")
             semantic_search_vector_store_instance = self.create_chroma_db_collection(
