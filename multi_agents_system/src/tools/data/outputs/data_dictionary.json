@@ -1,0 +1,206 @@
+# Data Dictionary for Emotional Surveillance App
+
+## Introduction
+### Purpose
+The purpose of this data dictionary is to define and document the key data attributes required for the Emotional Surveillance App. This includes detailed metadata, data types, formats, validation rules, relationships between data elements, and compliance-related attributes. The data dictionary ensures data integrity, consistency, and compliance with GDPR regulations.
+
+### Scope
+This document covers the key data elements, their attributes, and compliance measures based on the Business Requirements Document (BRD) draft and the compliance strategy. It facilitates effective data management, governance, and ensures consistency across the project.
+
+## Key Data Elements
+
+### 1. Voice Data
+**Attributes**: 
+- Voice modulation
+- Tone analysis
+
+**Data Types**:
+- **Audio Files**: WAV, MP3, FLAC
+- **Features Extracted**:
+  - **Pitch (Frequency)**: Float
+  - **Energy (Loudness)**: Float
+  - **Formants**: Array of Floats
+  - **Mel-Frequency Cepstral Coefficients (MFCCs)**: Array of Floats
+
+**Formats**:
+- **Raw Audio Files**: WAV files sampled at 16kHz
+- **Processed Data**: JSON or CSV files containing extracted features
+
+**Validation Rules**:
+- **File Type Validation**: Ensure the file is in the correct format (e.g., WAV)
+- **Sampling Rate Validation**: Audio files should have a sampling rate of 16kHz
+- **Feature Range Validation**: 
+  - Pitch should be within the human vocal range (85-255 Hz for males, 165-255 Hz for females)
+  - Energy levels should be normalized between 0 and 1
+  - Formants and MFCCs should be within expected ranges for the human voice
+
+**Example**:
+```json
+{
+  "audio_file": "voice_sample.wav",
+  "features": {
+    "pitch": 120.5,
+    "energy": 0.85,
+    "formants": [500.0, 1500.0, 2500.0],
+    "mfccs": [12.3, 14.7, 8.6, ...]
+  }
+}
+```
+
+**Compliance Attributes**:
+- **User Consent**: Explicit consent must be obtained from users before recording and analyzing their voice data.
+- **Data Encryption**: Voice data should be encrypted during transmission and storage using strong encryption algorithms (e.g., AES-256).
+- **Data Minimization**: Only collect the minimum necessary voice data required for emotion detection.
+
+### 2. Text Data
+**Attributes**: 
+- Analyzed using NLP libraries (e.g., NLTK, spaCy)
+
+**Data Types**:
+- **Text Strings**: UTF-8 encoded text
+- **Features Extracted**:
+  - **Tokens**: Array of Strings
+  - **Part of Speech Tags (POS)**: Array of Strings
+  - **Sentiment Scores**: Float (ranging from -1 to 1)
+  - **Named Entities**: Array of Strings
+
+**Formats**:
+- **Raw Text**: Plain text files (.txt) or JSON
+- **Processed Data**: JSON or CSV files containing extracted features
+
+**Validation Rules**:
+- **Character Encoding Validation**: Ensure text data is UTF-8 encoded
+- **Tokenization Validation**: Each token should be a valid word or punctuation mark
+- **Sentiment Score Range Validation**: Sentiment scores should be between -1 (negative) and 1 (positive)
+- **Entity Recognition Validation**: Named entities should be correctly identified and categorized
+
+**Example**:
+```json
+{
+  "text_data": "I am feeling very good today!",
+  "features": {
+    "tokens": ["I", "am", "feeling", "very", "good", "today", "!"],
+    "pos_tags": ["PRP", "VBP", "VBG", "RB", "JJ", "NN", "."],
+    "sentiment_score": 0.95,
+    "named_entities": ["O", "O", "O", "O", "O", "DATE"]
+  }
+}
+```
+
+**Compliance Attributes**:
+- **User Consent**: Explicit consent must be obtained from users before collecting and analyzing their text data.
+- **Data Encryption**: Text data should be encrypted during transmission and storage using strong encryption algorithms (e.g., AES-256).
+- **Data Minimization**: Only collect the minimum necessary text data required for emotion detection.
+
+### 3. Facial Expressions
+**Attributes**: 
+- Implemented using OpenCV and CNN for facial emotion analysis
+
+**Data Types**:
+- **Image Files**: Typically in JPEG or PNG formats
+- **Features Extracted**:
+  - **Facial Landmarks**: Array of Coordinates (x, y)
+  - **Emotion Scores**: Array of Floats (one score per emotion category)
+
+**Formats**:
+- **Raw Image Files**: JPEG or PNG files with a resolution of at least 48x48 pixels
+- **Processed Data**: JSON or CSV files containing extracted features
+
+**Validation Rules**:
+- **File Type Validation**: Ensure the file is in the correct format (e.g., JPEG, PNG)
+- **Resolution Validation**: Image files should have a minimum resolution of 48x48 pixels
+- **Facial Landmark Range Validation**: Coordinates should be within the dimensions of the image
+- **Emotion Score Range Validation**: Emotion scores should be between 0 and 1
+
+**Example**:
+```json
+{
+  "image_file": "face_sample.png",
+  "features": {
+    "facial_landmarks": [{"x": 30, "y": 50}, {"x": 35, "y": 60}, ...],
+    "emotion_scores": {"happy": 0.8, "sad": 0.1, "angry": 0.1}
+  }
+}
+```
+
+**Compliance Attributes**:
+- **User Consent**: Explicit consent must be obtained from users before capturing and analyzing their facial expressions.
+- **Data Anonymization**: Anonymize facial expression data to protect user identities using techniques such as blurring or removing identifiable features.
+- **Data Encryption**: Facial expression data should be encrypted during transmission and storage using strong encryption algorithms (e.g., AES-256).
+
+### 4. Emotion Detection Data
+**Attributes**: 
+- Combined data from voice, text, and facial expressions
+
+**Data Types**:
+- **Combined Data**: Aggregated data from voice, text, and facial expressions
+- **Features Extracted**:
+  - **Emotion Labels**: String (e.g., happy, sad, angry)
+  - **Confidence Scores**: Float (ranging from 0 to 1)
+
+**Formats**:
+- **Aggregated Data Files**: JSON or CSV files containing combined features from all sources
+
+**Validation Rules**:
+- **Data Integrity Validation**: Ensure all data sources (voice, text, facial expressions) are correctly aggregated
+- **Consistency Validation**: Ensure emotion labels and confidence scores are consistent across data sources
+- **Confidence Score Range Validation**: Confidence scores should be between 0 and 1
+
+**Example**:
+```json
+{
+  "combined_data": {
+    "voice_features": {
+      "pitch": 120.5,
+      "energy": 0.85,
+      "formants": [500.0, 1500.0, 2500.0],
+      "mfccs": [12.3, 14.7, 8.6, ...]
+    },
+    "text_features": {
+      "tokens": ["I", "am", "feeling", "very", "good", "today", "!"],
+      "pos_tags": ["PRP", "VBP", "VBG", "RB", "JJ", "NN", "."],
+      "sentiment_score": 0.95,
+      "named_entities": ["O", "O", "O", "O", "O", "DATE"]
+    },
+    "facial_features": {
+      "facial_landmarks": [{"x": 30, "y": 50}, {"x": 35, "y": 60}, ...],
+      "emotion_scores": {"happy": 0.8, "sad": 0.1, "angry": 0.1}
+    },
+    "detected_emotion": {
+      "emotion_label": "happy",
+      "confidence_score": 0.95
+    }
+  }
+}
+```
+
+**Compliance Attributes**:
+- **User Consent**: Explicit consent must be obtained from users before processing their emotion detection data.
+- **Data Minimization**: Only process the minimum necessary emotion detection data required for providing services.
+- **Regular Audits**: Conduct regular audits and assessments to ensure compliance with GDPR regulations.
+
+## Relationships Between Data Elements
+
+### Voice Data to Emotion Detection Data
+- Voice data feeds into the emotion detection system where algorithms analyze the modulation and tone to detect emotions. For example, a high pitch and fast speech rate may indicate excitement or anger.
+
+### Text Data to Emotion Detection Data
+- Text data complements voice data by providing contextual information on the user's emotional state. For example, aggressive language in text can corroborate an angry tone in voice data.
+
+### Facial Expressions to Emotion Detection Data
+- Facial expression data is crucial for visual emotion detection and provides a non-verbal cue to the user's emotional state. For instance, a frown or scowl detected by CNN may indicate sadness or frustration, supporting the findings from voice and text data.
+
+### Emotion Detection Data to User Profiles
+- Emotion detection data is cross-referenced with user profiles to tailor the user experience. For example, if a user profile indicates a preference for upbeat music when happy, the system can suggest such music when happiness is detected. Similarly, advertisers can target ads based on the user's current emotional state, enhancing engagement.
+
+## Example Scenario
+A user interacts with the Emotional Surveillance App:
+- The user's voice is analyzed, and the tone indicates stress.
+- The text input shows phrases like “I am overwhelmed” detected via NLP.
+- Facial expressions show furrowed brows and frowning detected by CNN.
+- The integrated emotion detection data concludes the user is stressed.
+- The user profile suggests that stress-relief ads and calming music are beneficial.
+- The app responds by offering relaxation techniques and showing relevant advertisements for stress-relief products.
+
+## Summary
+This data dictionary outlines the key data elements, their attributes, data types, formats, validation rules, relationships, and compliance measures for the Emotional Surveillance App. By integrating this information, the app can accurately detect emotions, provide tailored user experiences, and maintain compliance with GDPR regulations.

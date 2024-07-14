@@ -1,14 +1,9 @@
 from crewai import Agent
-from tools.input_extraction_tools import InputExtractionTools
-from tools.search_and_scrape_tools import SearchAndScrapeTools
-import re
-import streamlit as st
-
 
 class Agents():
     def __init__(self, input_extraction_tools, search_and_scrape_tools, compliance_tools):
         self.input_extraction_tools = input_extraction_tools
-        self.summary_tool, self.semantic_search_tool = self.input_extraction_tools.create_query_engine_tools()
+        self.input_summary_tool, self.input_semantic_search_tool = self.input_extraction_tools.create_query_engine_tools()
         self.search_and_scrape_tools = search_and_scrape_tools
         self.search_tool = self.search_and_scrape_tools.create_search_tool()
         self.scrape_tool = self.search_and_scrape_tools.create_scrape_tool()
@@ -27,7 +22,10 @@ class Agents():
                 'You have worked in various industries, including finance, healthcare, and technology, providing you with a broad perspective on different business models. '
                 'You are tasked with dissecting preliminary meeting notes to identify key project requirements and objectives, ensuring that all stakeholder needs are captured from the outset.'
             ),
-            tools=[self.summary_tool, self.semantic_search_tool],
+            tools=[
+                self.input_summary_tool,
+                self.input_semantic_search_tool
+                ],
             verbose=True,
         )
 
@@ -41,11 +39,30 @@ class Agents():
                 'Your skills helps product owners understand thier competitive landscapes and feasibility study'
                 'You are tasked with gathering detailed market data, analyzing competitors, and identifying technological trends and gaps that could influence the success of a new business initiative.'
             ),
-            tools=[self.search_tool,
-                   self.scrape_tool,
-                   self.youtube_video_search_tool,
-                   self.market_data_extraction_search_tool],
+            tools=[
+                self.search_tool,
+                self.scrape_tool,
+                self.youtube_video_search_tool,
+                self.market_data_extraction_search_tool
+                ],
             verbose=True,
+        )
+
+    def requirement_development_agent(self):
+        return Agent(
+            role='Senior Requirements Engineer',
+            goal='Develop detailed functional and non-functional requirements as well as Develop detailed functional requirements based on initial profiling and research based on initial profiling and research. ',
+            backstory=(
+                'You have extensive experience in requirements analysis, and specification as well as software engineering. '
+                'You have strong technical knowledge, excellent communication skills, and the ability to translate business needs into technical specifications.'
+                'With prowness of bridging the gap between business and technology'
+            ),
+            tools=[
+                self.search_tool,
+                self.scrape_tool,
+            ],
+            verbose=True,
+            allow_delegation=True,
         )
 
     def compliance_agent(self):
@@ -62,21 +79,7 @@ class Agents():
                 self.gdpr_semantic_search_tool
             ],
             verbose=True,
-        )
-
-    def requirement_development_agent(self):
-        return Agent(
-            role='Senior Requirements Engineer',
-            goal='Develop detailed functional and non-functional requirements as well as Develop detailed functional requirements based on initial profiling and research based on initial profiling and research. ',
-            backstory=(
-                'You have extensive experience in requirements analysis, and specification as well as software engineering. '
-                'You have strong technical knowledge, excellent communication skills, and the ability to translate business needs into technical specifications.'
-                'With prowness of bridging the gap between business and technology'
-            ),
-            tools=[self.search_tool,
-                   self.scrape_tool,
-            ],
-            verbose=True,
+            allow_delegation=True,
         )
 
     def data_dictionary_agent(self):
@@ -89,8 +92,9 @@ class Agents():
                 'Your role involves identifying key data elements, defining data types and formats, establishing relationships between data elements, and documenting metadata. '
                 'Your current project focuses on creating a comprehensive data dictionary for a new application, ensuring data integrity and consistency.'
             ),
-            tools=[self.search_tool,
-                   self.scrape_tool,
+            tools=[
+                self.search_tool,
+                self.scrape_tool,
             ],
             verbose=True,
         )
@@ -105,8 +109,9 @@ class Agents():
                 'Your role involves developing detailed project plans, estimating timelines, allocating resources, and managing risks. '
                 'Your current assignment is to ensure that a new project is planned and executed efficiently, meeting all deadlines and objectives'
             ),
-            tools=[self.search_tool,
-                   self.scrape_tool,
+            tools=[
+                self.search_tool,
+                self.scrape_tool,
             ],
             verbose=True,
         )
@@ -121,8 +126,9 @@ class Agents():
                 'Your role involves reviewing the Business Requirement Document (BRD) for completeness and correctness, ensuring adherence to best practices in business analysis and software engineering, and generating a comprehensive project summary. '
                 'Your current project requires you to oversee the final production of the BRD, guaranteeing that it meets the highest standards of quality and accuracy.'
             ),
-            tools=[self.search_tool,
-                   self.scrape_tool,
+            tools=[
+                self.search_tool,
+                self.scrape_tool,
             ],
             verbose=True,
         )
