@@ -36,7 +36,7 @@ class AgentTasks:
             ),
             expected_output=(
                 "A document titled 'Preliminary Meeting Notes Analysis' that includes: "
-                 "1. A detailed analysis of the initial project requirements. "
+                "1. A detailed analysis of the initial project requirements. "
                 "2. Clearly defined project objectives. "
                 "3. Identified stakeholder needs and expectations. "
                 "4. Any other relevant information extracted from the meeting notes. "
@@ -112,22 +112,23 @@ class AgentTasks:
         return Task(
             description=(
                 "Identify and define multiple key data attributes required for the project based on the Business Requirements Document (BRD) draft and the compliance strategy. "
-                "For each data attribute, specify data types, formats, validation rules, and establish relationships between data elements. "
+                "Follow the Pydantic model for each data attribute, specify data types, formats, validation rules, and establish relationships between data elements. "
                 "Document detailed metadata to support effective data management and ensure consistency throughout the project. "
                 "Ensure that the data dictionary aligns with both the project requirements and compliance measures, encompassing all necessary data attributes."
             ),
             expected_output=(
-                "A document titled 'Data Dictionary' that includes multiple data attributes with respective metadata: "
-                "1. Detailed metadata for each data attribute. "
-                "2. Data types, formats, and validation rules for each attribute. "
-                "3. Relationships between data elements. "
-                "4. Any compliance-related data attributes as specified in the compliance strategy. "
-                "This dictionary should facilitate effective data management, governance, and ensure consistency across the project."
+                "A JSON file that contains the following structured data attributes using the Pydantic model: "
+                "1. Metadata: Detailed metadata for each data attribute, including attribute name, description, source, and any relevant notes. "
+                "2. Data Types and Formats: Clearly defined data types and formats for each attribute, ensuring alignment with the project's data schema. "
+                "3. Validation Rules: Specific validation rules for each attribute, such as allowed ranges, patterns, or constraints. "
+                "4. Relationships: Defined relationships between data elements, indicating how attributes are interconnected. "
+                "5. Compliance Attributes: Any compliance-related data attributes as specified in the compliance strategy, with details on regulatory requirements and standards. "
+                "This JSON file should be comprehensive to facilitate effective data management, governance, and ensure consistency across the project."
             ),
             context=[requirement_development_task, compliance_task],
             agent=self.data_dictionary_agent,
             async_execution=True,
-            output_json=DataDictionary,
+            output_pydantic=DataDictionary, # Use the Pydantic model for structured output
             output_file="multi_agents_system/src/tools/data/outputs/data_dictionary.json",
         )
 
