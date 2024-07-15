@@ -1,0 +1,1 @@
+{"attribute_name":"attribute_name","description":"The name of the attribute in the dataset.","data_type":"string","maximum_length":255,"minimum_length":1,"allowed_values":"Any string value.","nullable":false,"default_value":null,"constrainst":null,"related_to":[]}
