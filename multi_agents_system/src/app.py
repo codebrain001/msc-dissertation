@@ -153,7 +153,7 @@ def main():
                 time.sleep(3)
             requirement_analysis_and_specification_crew = get_agentic_crew(model_name)
             with st.spinner('Indexing Uploaded document...'):
-                time.sleep(15)
+                time.sleep(30)
             with st.status("🤖 **Agents at work...**", state="running", expanded=True) as status:
                 with st.container(height=500, border=False):
                     sys.stdout = StreamToExpander(st)
@@ -161,7 +161,8 @@ def main():
                 status.update(label="✅ Requirement Analysis and Specification Successful!",
                       state="complete", expanded=False)
             st.subheader('View Agentic Workflow Outputs', anchor=False, divider="rainbow")
-            st.page_link("multi_agents_system/src/pages/ 1_🔍_outputs_viewer.py", label="Output Viewer", icon="1️⃣")
+            st.info("This section allows you to view the outputs of the agentic workflow. Click the link below to access the Output Viewer Page.")
+            st.page_link("pages/1_🔍_outputs_viewer.py", label="Output Viewer", icon="1️⃣")
 
             # Remove uploaded document(s)
             for file_name in os.listdir(input_dir):
