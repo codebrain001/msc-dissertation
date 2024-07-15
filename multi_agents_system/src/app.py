@@ -141,6 +141,7 @@ def get_agentic_crew(model_name):
     return requirement_analysis_and_specification_crew
 
 def main():
+    start_time = time.time()
     setup_page()
     st.sidebar.info("Sidebar configuration will be enabled after files are uploaded.")
     uploaded_files = upload_preliminary_documents()
@@ -153,7 +154,8 @@ def main():
                 time.sleep(3)
             requirement_analysis_and_specification_crew = get_agentic_crew(model_name)
             with st.spinner('Indexing Uploaded document...'):
-                time.sleep(30)
+                time.sleep(15)
+                st.info('The agentic workflow will start after the uploaded document is indexed in the vector store.',  icon="1️⃣")
             with st.status("🤖 **Agents at work...**", state="running", expanded=True) as status:
                 with st.container(height=500, border=False):
                     sys.stdout = StreamToExpander(st)
@@ -172,6 +174,10 @@ def main():
                 except Exception as e:
                     st.error(f'Failed to delete {file_path}. Reason: {e}')
                     st.toast("Uploaded document(s) removed from App.")
+
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    st.info(f"Time executed: {elapsed_time:.2f} seconds")
 
 if __name__ == "__main__":
     main()
