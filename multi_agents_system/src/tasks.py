@@ -1,3 +1,4 @@
+import os
 from crewai import Task
 from pydantic import BaseModel
 from typing import List, Optional
@@ -15,9 +16,10 @@ class DataDictionary(BaseModel):
    related_to: Optional[List[str]]
 
 class AgentTasks:
-    def __init__(self, preliminary_requirement_profiling_agent, research_agent, compliance_agent,
+    def __init__(self, model_name, preliminary_requirement_profiling_agent, research_agent, compliance_agent,
                  requirement_development_agent, data_dictionary_agent, project_management_agent,
                  quality_assurance_agent):
+        self.model_name = model_name
         self.preliminary_requirement_profiling_agent = preliminary_requirement_profiling_agent
         self.research_agent = research_agent
         self.compliance_agent = compliance_agent
@@ -25,6 +27,8 @@ class AgentTasks:
         self.data_dictionary_agent = data_dictionary_agent
         self.project_management_agent = project_management_agent
         self.quality_assurance_agent = quality_assurance_agent
+        self.base_output_path = f'multi_agents_system/src/tools/data/outputs/{model_name}'
+        os.makedirs(self.base_output_path, exist_ok=True)
 
     def create_preliminary_profiling_task(self):
         return Task(
@@ -43,7 +47,7 @@ class AgentTasks:
                 "This document will serve as the foundation for subsequent project phases, ensuring that all critical aspects are captured."
             ),
             agent=self.preliminary_requirement_profiling_agent,
-            output_file='multi_agents_system/src/tools/data/outputs/preliminary_requirement_profiling_document.md',
+            output_file=f'{self.base_output_path}/preliminary_requirement_profiling_document.md',
         )
 
     def create_research_task(self, preliminary_profiling_task):
@@ -64,7 +68,7 @@ class AgentTasks:
             ),
             agent=self.research_agent,
             context=[preliminary_profiling_task],
-            output_file='multi_agents_system/src/tools/data/outputs/market_research_document.md',
+            output_file=f'{self.base_output_path}/market_research_document.md',
         )
 
     def create_requirement_development_task(self, preliminary_profiling_task, research_task):
@@ -84,7 +88,7 @@ class AgentTasks:
             ),
             context=[preliminary_profiling_task, research_task],
             agent=self.requirement_development_agent,
-            output_file='multi_agents_system/src/tools/data/outputs/BRD_draft.md',
+            output_file=f'{self.base_output_path}/BRD_draft.md',
         )
 
 
@@ -105,7 +109,7 @@ class AgentTasks:
             ),
             context=[requirement_development_task],
             agent=self.compliance_agent,
-            output_file='multi_agents_system/src/tools/data/outputs/compliance_report.md',
+            output_file=f'{self.base_output_path}/compliance_report.md',
         )
 
     def create_data_dictionary_task(self, requirement_development_task, compliance_task):
@@ -129,7 +133,7 @@ class AgentTasks:
             agent=self.data_dictionary_agent,
             async_execution=True,
             output_pydantic=DataDictionary, # Use the Pydantic model for structured output
-            output_file="multi_agents_system/src/tools/data/outputs/data_dictionary.json",
+            output_file=f"{self.base_output_path}/data_dictionary.json",
         )
 
     def create_project_management_task(self, requirement_development_task, compliance_task):
@@ -149,7 +153,7 @@ class AgentTasks:
             ),
             context=[requirement_development_task, compliance_task],
             agent=self.project_management_agent,
-            output_file="multi_agents_system/src/tools/data/outputs/project_plan.md",
+            output_file=f"{self.base_output_path}/project_plan.md",
             async_execution=True
         )
 
@@ -170,5 +174,5 @@ class AgentTasks:
             ),
             context=[requirement_development_task, compliance_task, project_management_task],
             agent=self.quality_assurance_agent,
-            output_file="multi_agents_system/src/tools/data/outputs/final_BRD.md",
+            output_file=f"{self.base_output_path}/final_BRD.md",
         )
