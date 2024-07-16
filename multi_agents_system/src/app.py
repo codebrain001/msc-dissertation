@@ -31,7 +31,7 @@ def setup_page():
         }
     )
     show_pages([Page("multi_agents_system/src/app.py")])
-    hide_pages([Page("multi_agents_system/src/pages/ 1_🔍_outputs_viewer.py")])
+    hide_pages([Page("multi_agents_system/src/pages/1_outputs_viewer")])
 
 def write_to_env_file(filepath, key, value):
     if os.path.exists(filepath):
@@ -141,7 +141,6 @@ def get_agentic_crew(model_name):
     return requirement_analysis_and_specification_crew
 
 def main():
-    start_time = time.time()
     setup_page()
     st.sidebar.info("Sidebar configuration will be enabled after files are uploaded.")
     uploaded_files = upload_preliminary_documents()
@@ -149,13 +148,14 @@ def main():
     if uploaded_files:
         model_name, create_agents_button = sidebar_configuration(disabled=False)
         if create_agents_button and model_name:
+            start_time = time.time()
             st.session_state.model_name = model_name
             with st.spinner('Agentic Workflow Execution started...'):
                 time.sleep(3)
             requirement_analysis_and_specification_crew = get_agentic_crew(model_name)
+            st.info('The agentic workflow will start after the uploaded document is indexed in the vector store.',  icon="1️⃣")
             with st.spinner('Indexing Uploaded document...'):
                 time.sleep(15)
-                st.info('The agentic workflow will start after the uploaded document is indexed in the vector store.',  icon="1️⃣")
             with st.status("🤖 **Agents at work...**", state="running", expanded=True) as status:
                 with st.container(height=500, border=False):
                     sys.stdout = StreamToExpander(st)
@@ -164,8 +164,10 @@ def main():
                       state="complete", expanded=False)
             st.subheader('View Agentic Workflow Outputs', anchor=False, divider="rainbow")
             st.info("This section allows you to view the outputs of the agentic workflow. Click the link below to access the Output Viewer Page.")
-            st.page_link("pages/1_🔍_outputs_viewer.py", label="Output Viewer", icon="1️⃣")
+            st.page_link("pages/1_outputs_viewer.py", label="Output Viewer", icon="1️⃣")
 
+            end_time = time.time()
+            elapsed_time = end_time - start_time
             # Remove uploaded document(s)
             for file_name in os.listdir(input_dir):
                 file_path = os.path.join(input_dir, file_name)
@@ -175,9 +177,7 @@ def main():
                     st.error(f'Failed to delete {file_path}. Reason: {e}')
                     st.toast("Uploaded document(s) removed from App.")
 
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    st.info(f"Time executed: {elapsed_time:.2f} seconds")
+            st.info(f"Time executed: {elapsed_time:.2f} seconds")
 
 if __name__ == "__main__":
     main()

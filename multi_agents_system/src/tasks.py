@@ -39,7 +39,7 @@ class AgentTasks:
                 "Document the analysis in a clear and structured format."
             ),
             expected_output=(
-                "A document titled 'Preliminary Meeting Notes Analysis' that includes: "
+                "A document titled 'Preliminary Meeting Notes Analysis' that should contain content covering the following areas: "
                 "1. A detailed analysis of the initial project requirements. "
                 "2. Clearly defined project objectives. "
                 "3. Identified stakeholder needs and expectations. "
@@ -79,7 +79,7 @@ class AgentTasks:
                 "Document these requirements in a clear and structured format."
             ),
             expected_output=(
-                "A document titled 'Business Requirements Document (BRD) Draft' that includes: "
+                "A document titled 'Business Requirements Document (BRD) Draft' that should contain content covering the following areas: "
                 "1. Detailed functional requirements: Specific features and functionalities required for the project. "
                 "2. Detailed non-functional requirements: Performance, security, usability, and other quality attributes. "
                 "3. Comprehensive user stories: Clearly defined user stories that capture end-user needs and expected outcomes. "
@@ -100,7 +100,7 @@ class AgentTasks:
                 "Document all necessary compliance measures to safeguard data privacy and security, ensuring the project's adherence to GDPR standards."
             ),
             expected_output=(
-               "A document titled 'Compliance Report for BRD Draft' that includes the following: "
+               "A document titled 'Compliance Report for BRD Draft' that that should contain content covering the following areas: "
                 "1. Compliance Analysis: Assessment of the BRD draft to ensure alignment with GDPR regulations. "
                 "2. DPIA Report: Comprehensive Data Protection Impact Assessment detailing potential data privacy risks and mitigation strategies for the requirements specified in the BRD draft. "
                 "3. Compliance Strategy: A well-defined compliance strategy outlining the measures and procedures to ensure ongoing GDPR compliance for the project. "
