@@ -39,7 +39,7 @@ class AgentTasks:
                 "Document the analysis in a clear and structured format."
             ),
             expected_output=(
-                "A document titled 'Preliminary Meeting Notes Analysis' that should contain content covering the following areas: "
+                "A document titled 'Preliminary Meeting Notes Analysis' that contains content on: "
                 "1. A detailed analysis of the initial project requirements. "
                 "2. Clearly defined project objectives. "
                 "3. Identified stakeholder needs and expectations. "
@@ -58,7 +58,7 @@ class AgentTasks:
                 "This research will help inform strategic decisions and highlight potential opportunities and threats."
             ),
             expected_output=(
-                "A comprehensive document covering the following sub sections: "
+                "A document titled the 'Comprehensive Research' that contains content on: "
                 "1. Market Analysis: Detailed insights into market size, growth potential, and key market segments. Analysis of consumer behavior and preferences relevant to the project."
                 "2. Competitor Analysis: In-depth evaluation of direct and indirect competitors, including their strengths, weaknesses, market positioning, and strategies. "
                 "Identification of competitors' key products or services and their market share. "
@@ -74,12 +74,12 @@ class AgentTasks:
     def create_requirement_development_task(self, preliminary_profiling_task, research_task):
         return Task(
             description=(
-                "Develop detailed functional and non-functional requirements based on insights gained from the preliminary profiling and market research. "
+                "Develop detailed functional and non-functional requirements based on insights gained from the preliminary profiling and market research tasks. "
                 "Create comprehensive user stories and acceptance criteria for each requirement, ensuring they align with stakeholder needs and project objectives. "
                 "Document these requirements in a clear and structured format."
             ),
             expected_output=(
-                "A document titled 'Business Requirements Document (BRD) Draft' that should contain content covering the following areas: "
+                "A document titled 'Business Requirements Document (BRD) Draft' that contains content on: "
                 "1. Detailed functional requirements: Specific features and functionalities required for the project. "
                 "2. Detailed non-functional requirements: Performance, security, usability, and other quality attributes. "
                 "3. Comprehensive user stories: Clearly defined user stories that capture end-user needs and expected outcomes. "
@@ -100,7 +100,7 @@ class AgentTasks:
                 "Document all necessary compliance measures to safeguard data privacy and security, ensuring the project's adherence to GDPR standards."
             ),
             expected_output=(
-               "A document titled 'Compliance Report for BRD Draft' that that should contain content covering the following areas: "
+               "A document titled 'Compliance Report for BRD Draft' that contains content on: "
                 "1. Compliance Analysis: Assessment of the BRD draft to ensure alignment with GDPR regulations. "
                 "2. DPIA Report: Comprehensive Data Protection Impact Assessment detailing potential data privacy risks and mitigation strategies for the requirements specified in the BRD draft. "
                 "3. Compliance Strategy: A well-defined compliance strategy outlining the measures and procedures to ensure ongoing GDPR compliance for the project. "
@@ -144,7 +144,7 @@ class AgentTasks:
                 "Ensure the project plan aligns with the project's requirements and compliance measures, ensuring the project stays on track and within budget."
             ),
             expected_output=(
-                "A document titled 'Project Plan' that includes: "
+                "A document titled 'Project Plan' that contains content on: "
                 "1. Project milestones and deliverables. "
                 "2. Estimated timelines for each project phase. "
                 "3. Resource allocation details. "
@@ -165,7 +165,7 @@ class AgentTasks:
                 "Additionally, include a thorough project summary that encapsulates the key elements and findings of the project, ensuring the BRD meets the highest quality standards."
             ),
             expected_output=(
-                "A document titled 'Final Business Requirements Document (BRD)' that includes: "
+                "A document titled 'Final Business Requirements Document (BRD)' that contains content on: "
                 "1. Comprehensive Functional and Non-Functional Requirements: Detailed descriptions of all functional and non-functional requirements, "
                 "presented in tabular form, ensuring they are clear, complete, and aligned with project objectives. "
                 "2. Detailed User Stories: Thoroughly defined user stories that capture the end-users' needs and expected outcomes. "
