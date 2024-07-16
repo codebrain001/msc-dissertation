@@ -51,16 +51,15 @@ class Agents():
     def requirement_development_agent(self):
         return Agent(
             role='Senior Requirements Engineer',
-            goal='Develop detailed functional and non-functional requirements as well as Develop detailed functional requirements based on initial profiling and research based on initial profiling and research. ',
+            goal=(
+            'Develop comprehensive and detailed functional and non-functional requirements based on insights from initial profiling and market research tasks. '
+            'Create well-defined user stories and acceptance criteria for each requirement, ensuring all requirements are clearly articulated, actionable, and aligned with stakeholder needs and project objectives.'
+            ),
             backstory=(
                 'You have extensive experience in requirements analysis, and specification as well as software engineering. '
                 'You have strong technical knowledge, excellent communication skills, and the ability to translate business needs into technical specifications.'
                 'With prowness of bridging the gap between business and technology'
             ),
-            tools=[
-                self.search_tool,
-                self.scrape_tool,
-            ],
             verbose=True,
             allow_delegation=True,
         )
