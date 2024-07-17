@@ -26,15 +26,17 @@ def load_file_to_display(file_path):
 
 def main(model_name):
     setup_page()
+    st.header('Business Requirements Analysis and Specification Results')
+    st.subheader(f'Derived from AI Agents 🤖 Powered by Model: {model_name}')
     base_path = f'multi_agents_system/src/tools/data/outputs/{model_name}'
     files = [
+        "preliminary_requirement_profiling_document.md",
+        "market_research_document.md",
         "BRD_draft.md",
         "compliance_report.md",
         "data_dictionary.json",
+        "project_plan.md",
         "final_BRD.md",
-        "market_research_document.md",
-        "preliminary_requirement_profiling_document.md",
-        "project_plan.md"
     ]
     for file_name in files:
         file_path = os.path.join(base_path, file_name)

@@ -1,8 +1,8 @@
 import os
 import sys
-import shutil
 from dotenv import set_key, load_dotenv
 import time
+import json
 
 from utils import StreamToExpander
 from agents import Agents
@@ -30,8 +30,6 @@ def setup_page():
             'About': "## This tool helps in automating and enhancing software requirement analysis and specification process."
         }
     )
-    show_pages([Page("multi_agents_system/src/app.py")])
-    hide_pages([Page("multi_agents_system/src/pages/1_outputs_viewer")])
 
 def write_to_env_file(filepath, key, value):
     if os.path.exists(filepath):
@@ -44,6 +42,7 @@ def sidebar_configuration(disabled):
     llm_options = ["GPT-3.5-turbo", "GPT-4o", "Open-mixtral-8x22b", "Mistral-medium"]
     selected_llm = st.sidebar.selectbox("Choose LLM", llm_options, index=0, disabled=disabled, key="llm_selectbox")
     selected_llm = selected_llm.lower()
+    st.session_state.model_name = selected_llm
     st.sidebar.markdown("### API Key")
     api_key = st.sidebar.text_input("Enter your API key", type="password", disabled=disabled, key="api_key_input")
 
@@ -142,6 +141,17 @@ def get_agentic_crew(model_name):
 
 def main():
     setup_page()
+    show_pages(
+        [
+            Page("multi_agents_system/src/app.py", "Home", "🏠"),
+            Page("multi_agents_system/src/pages/1_outputs_viewer.py", "Outputs Viewer", "🔍")
+        ]
+    )
+    hide_pages(
+        [
+        "Outputs Viewer"
+        ]
+    )
     st.sidebar.info("Sidebar configuration will be enabled after files are uploaded.")
     uploaded_files = upload_preliminary_documents()
 
@@ -149,9 +159,7 @@ def main():
         model_name, create_agents_button = sidebar_configuration(disabled=False)
         if create_agents_button and model_name:
             start_time = time.time()
-            st.session_state.model_name = model_name
-            with st.spinner('Agentic Workflow Execution started...'):
-                time.sleep(3)
+            st.toast('Agentic Workflow Execution started...')
             requirement_analysis_and_specification_crew = get_agentic_crew(model_name)
             st.info('The agentic workflow will start after the uploaded document is indexed in the vector store.',  icon="1️⃣")
             with st.spinner('Indexing Uploaded document...'):
@@ -168,11 +176,11 @@ def main():
 
             end_time = time.time()
             elapsed_time = end_time - start_time
-            # Remove uploaded document(s)
+            # Remove uploaded input document(s)
             for file_name in os.listdir(input_dir):
                 file_path = os.path.join(input_dir, file_name)
                 try:
-                    shutil.rmtree(file_path)
+                    os.remove(file_path)
                 except Exception as e:
                     st.error(f'Failed to delete {file_path}. Reason: {e}')
                     st.toast("Uploaded document(s) removed from App.")
