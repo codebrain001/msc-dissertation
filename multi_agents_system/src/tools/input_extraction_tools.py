@@ -41,7 +41,7 @@ class InputExtractionTools:
     """
     Class for extracting input documents and creating a summarization and semantic search indices.
     """
-    def __init__(self, input_dir, model_name="gpt-3.5-turbo", load_collection_status=True):
+    def __init__(self, input_dir, model_name, load_collection_status):
         self.input_dir = input_dir
         self.model_name = model_name
         self.load_collection_status = load_collection_status
