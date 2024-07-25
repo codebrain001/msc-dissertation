@@ -1,18 +1,58 @@
 from crewai import Agent
+from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
+from langchain_groq import ChatGroq
+from langchain_ollama import ChatOllama
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_community.llms import Ollama
 
-class Agents():
-    def __init__(self, input_extraction_tools, search_and_scrape_tools, compliance_tools):
+
+import os
+import sys
+import logging
+import nest_asyncio
+# Apply nest_asyncio to allow nested event loops
+nest_asyncio.apply()
+
+# Configure logging
+logging.basicConfig(stream=sys.stdout, level=logging.WARNING)
+logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+
+class Agents:
+    def __init__(self, model_name, api_key,  input_extraction_tools, search_and_scrape_tools, compliance_tools):
+        self.model_name = model_name
+        self.api_key = api_key
         self.input_extraction_tools = input_extraction_tools
-        self.input_summary_tool, self.input_semantic_search_tool = self.input_extraction_tools.create_query_engine_tools()
         self.search_and_scrape_tools = search_and_scrape_tools
+        self.compliance_tools = compliance_tools
+        # Instatiate individual tools
+        self.input_summary_tool, self.input_semantic_search_tool = self.input_extraction_tools.create_query_engine_tools()
         self.search_tool = self.search_and_scrape_tools.create_search_tool()
         self.scrape_tool = self.search_and_scrape_tools.create_scrape_tool()
-        self.youtube_video_search_tool = self.search_and_scrape_tools.create_youtube_video_search_tool()
-        self.market_data_extraction_search_tool = self.search_and_scrape_tools.create_market_data_extraction_search_tool()
-        self.compliance_tools = compliance_tools
-        self.gdpr_summary_tool = self.compliance_tools.gdpr_summary_tool
-        self.gdpr_semantic_search_tool = self.compliance_tools.gdpr_semantic_search_tool
+        self.gdpr_summary_tool, self.gdpr_semantic_search_tool = compliance_tools.create_compliance_query_engine_tools()
 
+      # Define the llm model to run agent with
+        if self.model_name in ["gpt-3.5-turbo", "gpt-4o"]:
+            self.llm = ChatOpenAI(model=self.model_name, api_key=self.api_key, temperature=0)
+        elif self.model_name in ['claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307']:
+            self.llm = ChatAnthropic(model_name=self.model_name, api_key=self.api_key, temperature=0)
+        elif self.model_name in ['gemini-1.5-pro']:
+            self.llm = ChatGoogleGenerativeAI(model=f'models/{self.model_name}', api_key=self.api_key, temperature=0)
+        elif self.model_name in ['mixtral-8x7b-32768']:
+            self.llm = ChatGroq(model_name=self.model_name, api_key=self.api_key, temperature=0)
+        elif self.model_name in ['llama3-8b-8192']:
+            self.llm = ChatGroq(model_name=self.model_name, api_key=self.api_key, temperature=0, max_tokens=500)
+        elif self.model_name in ['gemma:2b (Local)']:
+            self.llm = ChatOllama(
+                model='gemma:2b',
+                temperature=0,
+                base_url="http://localhost:11434",
+                api_key=self.api_key,
+            )
+        else:
+            logging.error(f'Unsupported model name: {self.model_name}')
+
+    # Define the agents
     def preliminary_requirement_profiling_agent(self):
         return Agent(
             role='Senior Business Analyst',
@@ -25,8 +65,9 @@ class Agents():
             tools=[
                 self.input_summary_tool,
                 self.input_semantic_search_tool
-                ],
+            ],
             verbose=True,
+            llm=self.llm,
         )
 
     def research_agent(self):
@@ -42,10 +83,9 @@ class Agents():
             tools=[
                 self.search_tool,
                 self.scrape_tool,
-                self.youtube_video_search_tool,
-                self.market_data_extraction_search_tool
                 ],
             verbose=True,
+            llm=self.llm
         )
 
     def requirement_development_agent(self):
@@ -61,7 +101,7 @@ class Agents():
                 'With prowness of bridging the gap between business and technology'
             ),
             verbose=True,
-            allow_delegation=True,
+            llm=self.llm
         )
 
     def compliance_agent(self):
@@ -78,7 +118,7 @@ class Agents():
                 self.gdpr_semantic_search_tool
             ],
             verbose=True,
-            allow_delegation=True,
+            llm=self.llm
         )
 
     def data_dictionary_agent(self):
@@ -91,28 +131,8 @@ class Agents():
                 'Your role involves identifying key data elements, defining data types and formats, establishing relationships between data elements, and documenting metadata. '
                 'Your current project focuses on creating a comprehensive data dictionary for a new application, ensuring data integrity and consistency.'
             ),
-            tools=[
-                self.search_tool,
-                self.scrape_tool,
-            ],
             verbose=True,
-        )
-
-    def project_management_agent(self):
-        return Agent(
-            role='Senior Project Manager',
-            goal='Develop a detailed project plan and timeline. ',
-            backstory=(
-                'You are a Senior Project Manager with a proven track record of successfully leading projects from inception to completion. '
-                'With a background in project management and a certification in PMP, you have managed projects across various domains, including IT, construction, and healthcare. '
-                'Your role involves developing detailed project plans, estimating timelines, allocating resources, and managing risks. '
-                'Your current assignment is to ensure that a new project is planned and executed efficiently, meeting all deadlines and objectives'
-            ),
-            tools=[
-                self.search_tool,
-                self.scrape_tool,
-            ],
-            verbose=True,
+            llm=self.llm
         )
 
     def quality_assurance_agent(self):
@@ -130,4 +150,19 @@ class Agents():
                 self.scrape_tool,
             ],
             verbose=True,
+            llm=self.llm
+        )
+
+    def project_management_agent(self):
+        return Agent(
+            role='Senior Project Manager',
+            goal='Develop a detailed project plan and timeline. ',
+            backstory=(
+                'You are a Senior Project Manager with a proven track record of successfully leading projects from inception to completion. '
+                'With a background in project management and a certification in PMP, you have managed projects across various domains, including IT, construction, and healthcare. '
+                'Your role involves developing detailed project plans, estimating timelines, allocating resources, and managing risks. '
+                'Your current assignment is to ensure that a new project is planned and executed efficiently, meeting all deadlines and objectives'
+            ),
+            verbose=True,
+            llm=self.llm
         )
