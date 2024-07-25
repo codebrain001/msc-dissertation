@@ -1,50 +1,49 @@
-import os
 from crewai import Task
-from pydantic import BaseModel
-from typing import List, Optional
+import os
 
-class DataDictionary(BaseModel):
-   attribute_name: str
-   description: str
-   data_type: str
-   maximum_length: int
-   minimum_length: int
-   allowed_values: str
-   nullable: bool
-   default_value: Optional[str]
-   constrainst: Optional[str]
-   related_to: Optional[List[str]]
 
 class AgentTasks:
-    def __init__(self, model_name, preliminary_requirement_profiling_agent, research_agent, compliance_agent,
-                 requirement_development_agent, data_dictionary_agent, project_management_agent,
-                 quality_assurance_agent):
+    def __init__(
+            self,
+            model_name,
+            preliminary_requirement_profiling_agent,
+            research_agent,
+            requirement_development_agent,
+            compliance_agent,
+            data_dictionary_agent,
+            quality_assurance_agent,
+            project_management_agent
+        ):
         self.model_name = model_name
         self.preliminary_requirement_profiling_agent = preliminary_requirement_profiling_agent
         self.research_agent = research_agent
-        self.compliance_agent = compliance_agent
         self.requirement_development_agent = requirement_development_agent
+        self.compliance_agent = compliance_agent
         self.data_dictionary_agent = data_dictionary_agent
-        self.project_management_agent = project_management_agent
         self.quality_assurance_agent = quality_assurance_agent
+        self.project_management_agent = project_management_agent
         self.base_output_path = f'multi_agents_system/src/tools/data/outputs/{model_name}'
         os.makedirs(self.base_output_path, exist_ok=True)
 
     def create_preliminary_profiling_task(self):
         return Task(
             description=(
-                "Thoroughly analyze the preliminary meeting notes provided to key identify and extract key project requirements, objectives, and stakeholder needs. "
+                "Thoroughly analyze the preliminary meeting notes using the provided tools to identify and extract key project requirements, objectives, and stakeholder needs. "
                 "Summarize the essential points to provide a foundational understanding of the project scope, "
                 "ensuring all critical aspects are captured for subsequent phases. "
-                "Document the analysis in a clear and structured format."
+                "Document the analysis in a clear and structured format, ensuring all information is solely derived from the tools."
             ),
             expected_output=(
-                "Produce a document titled 'Preliminary Meeting Notes Analysis' that contains content on: "
-                "1. A detailed analysis of the initial project requirements. "
-                "2. Clearly defined project objectives. "
-                "3. Identified stakeholder needs and expectations. "
-                "4. Any other relevant information extracted from the meeting notes. "
-                "This document will serve as the foundation for subsequent project phases, ensuring that all critical aspects are captured."
+                "Produce a detailed document titled 'Preliminary Meeting Notes Analysis' that includes the following sections:\n"
+                "1. **Initial Project Requirements**:\n"
+                "   - A detailed analysis of the initial project requirements identified from the meeting notes using the tools.\n"
+                "2. **Project Objectives**:\n"
+                "   - Clearly defined project objectives that outline the goals and expected outcomes of the project, derived from the tools.\n"
+                "3. **Stakeholder Needs and Expectations**:\n"
+                "   - Identification and documentation of stakeholder needs, expectations, and any specific concerns or priorities, as identified by the tools.\n"
+                "4. **Additional Relevant Information**:\n"
+                "   - Any other pertinent information extracted from the meeting notes that may impact the project, solely derived from the tools.\n"
+                "This document will serve as the foundation for subsequent project phases, ensuring that all critical aspects are captured and clearly articulated based on the tools' analysis."
             ),
             agent=self.preliminary_requirement_profiling_agent,
             output_file=f'{self.base_output_path}/preliminary_requirement_profiling_document.md',
@@ -134,25 +133,60 @@ class AgentTasks:
                 "Ensure that the data dictionary aligns with both the project requirements and compliance measures, encompassing all necessary data attributes."
             ),
             expected_output=(
-                "Produce a comprehensive JSON file that contains multiple structured data attributes using the Pydantic model. Each data attribute should include the following details:\n"
+                "Produce a comprehensive markdown document that contains a table with multiple structured data attributes using the Pydantic model. "
+                "Each data attribute should include the following details:\n"
                 "1. **Metadata**: Detailed metadata for each data attribute, including attribute name, description, source, and any relevant notes.\n"
                 "2. **Data Types and Formats**: Clearly defined data types and formats for each attribute, ensuring alignment with the project's data schema.\n"
                 "3. **Validation Rules**: Specific validation rules for each attribute, such as allowed ranges, patterns, or constraints.\n"
                 "4. **Relationships**: Defined relationships between data elements, indicating how attributes are interconnected.\n"
                 "5. **Compliance Attributes**: Any compliance-related data attributes as specified in the compliance strategy, with details on regulatory requirements and standards.\n"
-                "The JSON file should be detailed and structured to facilitate effective data management, governance, and ensure consistency across the project."
+                "The markdown document should be detailed and structured to facilitate effective data management, governance, and ensure consistency across the project.\n\n"
+                "### Example Markdown Output:\n\n"
+                "| Attribute Name | Description                      | Data Type | Maximum Length | Minimum Length | Allowed Values | Nullable | Default Value | Constraints   | Related To     |\n"
+                "|----------------|----------------------------------|-----------|----------------|----------------|----------------|----------|---------------|---------------|----------------|\n"
+                "| customer_id    | Unique identifier for a customer | string    | 36             | 1              | UUID format    | false    | null          | Must be unique | order_id       |\n"
+                "| order_id       | Unique identifier for an order   | string    | 36             | 1              | UUID format    | false    | null          | Must be unique | customer_id    |\n"
             ),
             context=[requirement_development_task, compliance_task],
             agent=self.data_dictionary_agent,
             async_execution=True,
-            output_pydantic=DataDictionary, # Use the Pydantic model for structured output
-            output_file=f"{self.base_output_path}/data_dictionary.json",
+            output_file=f"{self.base_output_path}/data_dictionary.md",
         )
 
-    def create_project_management_task(self, requirement_development_task, compliance_task):
+    def create_quality_assurance_task(self, requirement_development_task, compliance_task):
         return Task(
             description=(
-                "Develop a detailed project plan and timeline based on the Business Requirements Document (BRD) draft and the compliance strategy. "
+                "Conduct a thorough review of the Business Requirements Document (BRD) draft from the requirement development task to ensure its completeness, accuracy, and alignment with the compliance strategy. "
+                "Enhance and finalize the document by incorporating comprehensive functional and non-functional requirements, detailed user stories, and adhering to best practices in business analysis and software engineering. "
+                "Additionally, include a thorough project summary that encapsulates the key elements and findings of the project, ensuring the BRD meets the highest quality standards. "
+                "Ensure the document aligns with GDPR compliance guidelines to maintain data privacy and security protocols throughout the project lifecycle."
+            ),
+            expected_output=(
+                "Produce a detailed document titled 'Final Business Requirements Document (BRD)' that contains the following sections:\n"
+                "1. **Comprehensive Functional and Non-Functional Requirements**:\n"
+                "   - Detailed descriptions of all functional and non-functional requirements, presented in tabular form.\n"
+                "   - Ensure each requirement is clear, complete, and aligned with project objectives.\n"
+                "   - Include data privacy and security requirements to comply with GDPR guidelines.\n"
+                "2. **Detailed User Stories**:\n"
+                "   - Thoroughly defined user stories that capture the end-users' needs and expected outcomes.\n"
+                "   - Use the format: 'As a [user], I want [feature] so that [benefit]'.\n"
+                "3. **Project Summary**:\n"
+                "   - A comprehensive summary of the project, including key findings, objectives, and any critical insights derived during the quality assurance process.\n"
+                "4. **Stakeholder Analysis**:\n"
+                "   - Identify and analyze the stakeholders involved in the project, their roles, and their impact.\n"
+                "   - Include any GDPR-related roles, such as Data Protection Officer (DPO).\n"
+                "The finalized BRD should ensure the project is fully prepared for the next stages, adheres to both project and compliance requirements, and aligns with GDPR guidelines."
+            ),
+            context=[requirement_development_task, compliance_task],
+            agent=self.quality_assurance_agent,
+            async_execution=True,
+            output_file=f"{self.base_output_path}/final_BRD.md",
+        )
+
+    def create_project_management_task(self, quality_assurance_task):
+        return Task(
+            description=(
+                "Develop a detailed project plan and timeline based on the Final Business Requirements Document (BRD), "
                 "Include estimated timelines for each project phase, allocate resources effectively, and develop a risk management plan to anticipate and mitigate potential challenges. "
                 "Ensure the project plan aligns with the project's requirements and compliance measures, ensuring the project stays on track and within budget."
             ),
@@ -164,36 +198,7 @@ class AgentTasks:
                 "4. Risk management strategies to anticipate and mitigate potential challenges. "
                 "This plan should provide a clear roadmap for successful project execution, aligning with both project requirements and compliance measures."
             ),
-            context=[requirement_development_task, compliance_task],
+            context=[quality_assurance_task],
             agent=self.project_management_agent,
             output_file=f"{self.base_output_path}/project_plan.md",
-            async_execution=True
-        )
-
-    def create_quality_assurance_task(self, requirement_development_task, compliance_task, project_management_task):
-        return Task(
-            description=(
-                "Conduct a thorough review of the Business Requirements Document (BRD) draft from the requirement development task to ensure its completeness, accuracy, and alignment with the compliance strategy. "
-                "Enhance and finalize the document by incorporating comprehensive functional and non-functional requirements, detailed user stories, and adhering to best practices in business analysis and software engineering. "
-                "Additionally, include a thorough project summary that encapsulates the key elements and findings of the project, ensuring the BRD meets the highest quality standards."
-            ),
-            expected_output=(
-                "Produce a detailed document titled 'Final Business Requirements Document (BRD)' that contains the following sections:\n"
-                "1. **Comprehensive Functional and Non-Functional Requirements**:\n"
-                "   - Detailed descriptions of all functional and non-functional requirements, presented in tabular form.\n"
-                "   - Ensure each requirement is clear, complete, and aligned with project objectives.\n"
-                "2. **Detailed User Stories**:\n"
-                "   - Thoroughly defined user stories that capture the end-users' needs and expected outcomes.\n"
-                "   - Use the format: 'As a [user], I want [feature] so that [benefit]'.\n"
-                "3. **Project Summary**:\n"
-                "   - A comprehensive summary of the project, including key findings, objectives, and any critical insights derived during the quality assurance process.\n"
-                "4. **Stakeholder Analysis**:\n"
-                "   - Identify and analyze the stakeholders involved in the project, their roles, and their impact.\n"
-                "5. **Integrated Visuals**:\n"
-                "   - Include diagrams, flowcharts, and other visuals that support and enhance the textual content.\n"
-                "The finalized BRD should ensure the project is fully prepared for the next stages and adheres to both project and compliance requirements."
-            ),
-            context=[requirement_development_task, compliance_task, project_management_task],
-            agent=self.quality_assurance_agent,
-            output_file=f"{self.base_output_path}/final_BRD.md",
         )

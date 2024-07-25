@@ -1,1 +1,0 @@
-{"attribute_name":"audio_samples","description":"Raw audio data from user voice inputs used for emotion detection.","data_type":"bytes","maximum_length":10485760,"minimum_length":1,"allowed_values":"audio/wav files","nullable":false,"default_value":null,"constrainst":"Encrypted at rest and in transit per GDPR Article 32","related_to":["emotion_labels","timestamp","user_id"]}

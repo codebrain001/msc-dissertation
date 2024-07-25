@@ -1,15 +1,7 @@
 from crewai_tools import (
-    ScrapeWebsiteTool,
-    MDXSearchTool,
     SerperDevTool,
-    YoutubeVideoSearchTool,
+    ScrapeWebsiteTool,
 )
-
-import os
-from dotenv import load_dotenv
-# Load environment variables
-dotenv_path = 'multi_agents_system/src/.env'
-load_dotenv(dotenv_path=dotenv_path)
 
 class SearchAndScrapeTools:
     """
@@ -22,8 +14,6 @@ class SearchAndScrapeTools:
         """
         self.search_tool = self.create_search_tool()
         self.scrape_tool = self.create_scrape_tool()
-        self.youtube_video_search_tool = self.create_youtube_video_search_tool()
-        self.market_data_extraction_search_tool = self.create_market_data_extraction_search_tool()
 
     def create_search_tool(self):
         """
@@ -42,22 +32,3 @@ class SearchAndScrapeTools:
             ScrapeWebsiteTool: An instance of ScrapeWebsiteTool for scraping websites.
         """
         return ScrapeWebsiteTool()
-
-    def create_youtube_video_search_tool(self):
-        """
-        Create a tool to search YouTube videos.
-
-        Returns:
-            YoutubeVideoSearchTool: An instance of YoutubeVideoSearchTool for YouTube video search.
-        """
-        return YoutubeVideoSearchTool()
-
-
-    def create_market_data_extraction_search_tool(self):
-        """
-        Create a tool to search and extract market data.
-
-        Returns:
-            MDXSearchTool: An instance of MDXSearchTool for market data extraction.
-        """
-        return MDXSearchTool()

@@ -1,1 +1,0 @@
-{"attribute_name":"voice_modulation_and_tone","description":"Detects emotions such as happiness, sadness, and anger by analyzing the modulation and tone of a user's voice.","data_type":"string","maximum_length":255,"minimum_length":1,"allowed_values":"^[\\w\\s]+$","nullable":false,"default_value":null,"constrainst":null,"related_to":["user_id","timestamp"]}
