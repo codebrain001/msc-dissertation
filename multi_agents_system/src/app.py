@@ -3,6 +3,7 @@ import sys
 from dotenv import load_dotenv
 import time
 import csv
+from langtrace_python_sdk import langtrace
 
 from utils import StreamToExpander
 from agents import Agents
@@ -11,20 +12,22 @@ from tools.search_and_scrape_tools import SearchAndScrapeTools
 from tools.compliance_tools import ComplianceTools
 from tasks import AgentTasks
 
-from crewai import Crew, Process
+from crewai import Crew
 import streamlit as st
-from st_pages import hide_pages, show_pages, Page
 
 # Setup directories
+# Load environment variables
 env_file_path = './multi_agents_system/src/.env'
 load_dotenv(dotenv_path=env_file_path)
+LANGTRACE_API_KEY = os.getenv("LANGTRACE_API_KEY")
 input_dir = "multi_agents_system/src/tools/data/inputs"
 gdpr_dir = 'multi_agents_system/src/tools/data/documents'
+
 
 def setup_page():
     st.set_page_config(
         page_title="Multi-Agent Requirement Analysis and Specification",
-        page_icon="📝",
+        page_icon="🏠",
         layout="wide",
         menu_items={
             'Report a bug': "https://github.com/codebrain001/msc-dissertation/issues/",
@@ -35,7 +38,7 @@ def setup_page():
 def sidebar_configuration(disabled):
     st.sidebar.title("Configuration")
     st.sidebar.markdown("### Select LLM")
-    llm_options = ["GPT-3.5-turbo", "GPT-4o",  'claude-3-haiku-20240307', 'claude-3-sonnet-20240229', 'claude-3-opus-20240229', 'gemini-1.5-pro','mixtral-8x7b-32768', 'llama3-8b-8192', 'gemma:2b (Local)']
+    llm_options = ["GPT-4o", 'claude-3-opus-20240229', 'gemini-1.5-pro']
     selected_llm = st.sidebar.selectbox("Choose LLM", llm_options, index=0, disabled=disabled, key="llm_selectbox")
     selected_llm = selected_llm.lower()
     st.session_state.model_name = selected_llm
@@ -119,24 +122,14 @@ def create_agentic_crew(model_name, api_key):
             quality_assurance_task,
             project_management_task,
         ],
-        verbose=2,
+        verbose=True,
         memory=True
     )
     return requirement_analysis_and_specification_crew
 
 def main():
     setup_page()
-    show_pages(
-        [
-            Page("multi_agents_system/src/app.py", "Home", "🏠"),
-            Page("multi_agents_system/src/pages/1_outputs_viewer.py", "Outputs Viewer", "🔍")
-        ]
-    )
-    hide_pages(
-        [
-        "Outputs Viewer"
-        ]
-    )
+    langtrace.init(api_key=LANGTRACE_API_KEY)
     st.sidebar.info("Sidebar configuration will be enabled after files are uploaded.")
     uploaded_files = upload_preliminary_documents()
 
@@ -186,4 +179,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

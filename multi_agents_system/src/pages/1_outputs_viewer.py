@@ -26,6 +26,7 @@ def load_file_to_display(file_path):
 
 def main(model_name):
     setup_page()
+    st.write(st.session_state['model_name'])
     st.header('Business Requirements Analysis and Specification Results')
     st.subheader(f'Derived from AI Agents 🤖 Powered by Model: {model_name}')
     base_path = f'multi_agents_system/src/tools/data/outputs/{model_name}'
@@ -58,3 +59,4 @@ if __name__ == "__main__":
         main(model_name)
     else:
         st.error("Model name not found in session state.")
+        st.info('Initiate the agentic workflow and please wait for its completion. Once the workflow is finished, you can then access the output page to view the results.', icon="ℹ️")
