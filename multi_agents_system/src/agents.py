@@ -1,13 +1,8 @@
 from crewai import Agent
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
-from langchain_groq import ChatGroq
-from langchain_ollama import ChatOllama
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_community.llms import Ollama
 
-
-import os
 import sys
 import logging
 import nest_asyncio
@@ -32,23 +27,12 @@ class Agents:
         self.gdpr_summary_tool, self.gdpr_semantic_search_tool = compliance_tools.create_compliance_query_engine_tools()
 
       # Define the llm model to run agent with
-        if self.model_name in ["gpt-3.5-turbo", "gpt-4o"]:
+        if self.model_name in ["gpt-4o"]:
             self.llm = ChatOpenAI(model=self.model_name, api_key=self.api_key, temperature=0)
-        elif self.model_name in ['claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307']:
+        elif self.model_name in ['claude-3-opus-20240229']:
             self.llm = ChatAnthropic(model_name=self.model_name, api_key=self.api_key, temperature=0)
         elif self.model_name in ['gemini-1.5-pro']:
             self.llm = ChatGoogleGenerativeAI(model=f'models/{self.model_name}', api_key=self.api_key, temperature=0)
-        elif self.model_name in ['mixtral-8x7b-32768']:
-            self.llm = ChatGroq(model_name=self.model_name, api_key=self.api_key, temperature=0)
-        elif self.model_name in ['llama3-8b-8192']:
-            self.llm = ChatGroq(model_name=self.model_name, api_key=self.api_key, temperature=0, max_tokens=500)
-        elif self.model_name in ['gemma:2b (Local)']:
-            self.llm = ChatOllama(
-                model='gemma:2b',
-                temperature=0,
-                base_url="http://localhost:11434",
-                api_key=self.api_key,
-            )
         else:
             logging.error(f'Unsupported model name: {self.model_name}')
 

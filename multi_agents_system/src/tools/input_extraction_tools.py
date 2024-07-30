@@ -12,16 +12,11 @@ from llama_index.vector_stores.chroma import ChromaVectorStore
 import chromadb
 from chromadb.config import Settings as ChromaSettings
 from llama_index.llms.openai import OpenAI
+from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.llms.anthropic import Anthropic
+from llama_index.embeddings.voyageai import VoyageEmbedding
 from llama_index.llms.gemini import Gemini
 from llama_index.embeddings.gemini import GeminiEmbedding
-from llama_index.llms.groq import Groq
-from llama_index.llms.ollama import Ollama
-from llama_index.embeddings.openai import OpenAIEmbedding
-from llama_index.embeddings.voyageai import VoyageEmbedding
-from llama_index.embeddings.mistralai import MistralAIEmbedding
-from llama_index.embeddings.nomic import NomicEmbedding
-from llama_index.embeddings.ollama import OllamaEmbedding
 from crewai_tools import LlamaIndexTool
 
 import os
@@ -40,8 +35,6 @@ logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 dotenv_path = 'multi_agents_system/src/.env'
 load_dotenv(dotenv_path=dotenv_path)
 vogage_api_key = os.getenv("VOGAGE_API_KEY")
-nomic_api_key = os.getenv("NOMIC_API_KEY")
-mistral_api_key = os.getenv("MISTRAL_API_KEY")
 
 # Vector store persistent directory
 persist_vector_store_path = 'multi_agents_system/src/tools/chromadb/'
@@ -56,36 +49,15 @@ class InputExtractionTools:
         self.api_key = api_key
         self.load_collection_status = load_collection_status
         # Define the llm model to run embedding model as LLM for query engine
-        if self.model_name in ["gpt-3.5-turbo", "gpt-4o"]:
+        if self.model_name in ["gpt-4o"]:
             self.llm = OpenAI(model=self.model_name, api_key=self.api_key)
             self.embed_model = OpenAIEmbedding(model='text-embedding-3-small', api_key=self.api_key)
-        elif self.model_name in ['claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307']:
+        elif self.model_name in ['claude-3-opus-20240229']:
             self.llm = Anthropic(model=self.model_name, api_key=self.api_key, temperature=0)
             self.embed_model = VoyageEmbedding(model_name='voyage-large-2-instruct', voyage_api_key=vogage_api_key)
         elif self.model_name in ['gemini-1.5-pro']:
             self.llm = Gemini(model=f'models/{self.model_name}', api_key=self.api_key, temperature=0)
             self.embed_model = GeminiEmbedding(model_name='models/embedding-001', api_key=self.api_key)
-        elif self.model_name == 'mixtral-8x7b-32768':
-            self.llm = Groq(model=self.model_name, api_key=self.api_key)
-            self.embed_model = MistralAIEmbedding(model_name="mistral-embed", api_key=mistral_api_key)
-        elif self.model_name == 'llama3-8b-8192':
-            self.llm = Groq(model=self.model_name, api_key=self.api_key)
-            self.embed_model = NomicEmbedding(
-                api_key=nomic_api_key,
-                dimensionality=768,
-                model_name="nomic-embed-text-v1.5",
-            )
-        elif self.model_name == 'gemma:2b (Local)':
-            self.llm = Ollama(
-                model='gemma:2b',
-                base_url="http://localhost:11434",
-                request_timeout=1000.0
-            )
-            self.embed_model = OllamaEmbedding(
-                model_name="nomic-embed-text",
-                base_url="http://localhost:11434",
-                ollama_additional_kwargs={"mirostat": 0},
-            )
         else:
             logging.error(f'Unsupported model name: {self.model_name}')
 
@@ -133,18 +105,12 @@ class InputExtractionTools:
         Create or load a Chroma DB collection for storing vectors.
         """
         # Check the model name and add the appropriate suffix
-        if self.model_name in ["gpt-3.5-turbo", "gpt-4o"]:
+        if self.model_name in ["gpt-4o"]:
             collection_name_suffix = "openai"
-        elif self.model_name in ['claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307']:
+        elif self.model_name in ['claude-3-opus-20240229']:
             collection_name_suffix = "claude"
         elif self.model_name in ["gemini-1.5-pro"]:
             collection_name_suffix = "gemini"
-        elif self.model_name in ["mixtral-8x7b-32768"]:
-            collection_name_suffix = "mixtral"
-        elif self.model_name in ["llama3-8b-8192"]:
-            collection_name_suffix = "llama"
-        elif self.model_name in ["gemma:2b (Local)"]:
-            collection_name_suffix = "gemma"
         else:
             logging.error(f"Invalid LLM, cannot create collection name suffix for model: {self.model_name}")
             return None  # Return if model name is invalid
