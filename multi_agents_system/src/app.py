@@ -3,7 +3,8 @@ import sys
 from dotenv import load_dotenv
 import time
 import csv
-from langtrace_python_sdk import langtrace
+import logging
+import nest_asyncio
 
 from utils import StreamToExpander
 from agents import Agents
@@ -15,14 +16,19 @@ from tasks import AgentTasks
 from crewai import Crew
 import streamlit as st
 
-# Setup directories
 # Load environment variables
 env_file_path = './multi_agents_system/src/.env'
 load_dotenv(dotenv_path=env_file_path)
-LANGTRACE_API_KEY = os.getenv("LANGTRACE_API_KEY")
+# Setup directories
 input_dir = "multi_agents_system/src/tools/data/inputs"
 gdpr_dir = 'multi_agents_system/src/tools/data/documents'
 
+# Apply nest_asyncio to allow nested event loops
+nest_asyncio.apply()
+
+# Configure logging
+logging.basicConfig(stream=sys.stdout, level=logging.WARNING)
+logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
 def setup_page():
     st.set_page_config(
@@ -38,7 +44,7 @@ def setup_page():
 def sidebar_configuration(disabled):
     st.sidebar.title("Configuration")
     st.sidebar.markdown("### Select LLM")
-    llm_options = ["GPT-4o", 'claude-3-opus-20240229', 'gemini-1.5-pro']
+    llm_options = ["GPT-4o",  'Claude-3-5-Sonnet-20240620', 'Gemini-1.5-Pro']
     selected_llm = st.sidebar.selectbox("Choose LLM", llm_options, index=0, disabled=disabled, key="llm_selectbox")
     selected_llm = selected_llm.lower()
     st.session_state.model_name = selected_llm
@@ -122,14 +128,13 @@ def create_agentic_crew(model_name, api_key):
             quality_assurance_task,
             project_management_task,
         ],
-        verbose=True,
+        verbose=2,
         memory=True
     )
     return requirement_analysis_and_specification_crew
 
 def main():
     setup_page()
-    langtrace.init(api_key=LANGTRACE_API_KEY)
     st.sidebar.info("Sidebar configuration will be enabled after files are uploaded.")
     uploaded_files = upload_preliminary_documents()
 
@@ -172,7 +177,7 @@ def main():
             with open(csv_file_path, mode='a', newline='') as file:
                 writer = csv.writer(file)
                 if not file_exists:
-                    writer.writerow(['Model Name', 'Execution Time (seconds)'])  # Write header if file is new
+                    writer.writerow(['Model Name', 'Execution Time (seconds)'])
                 writer.writerow([model_name, f"{elapsed_time:.2f}"])
 
             st.toast(f"Execution details saved")
