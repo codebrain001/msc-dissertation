@@ -5,7 +5,6 @@ import time
 import csv
 import logging
 import nest_asyncio
-from langtrace_python_sdk import langtrace
 
 from utils import StreamToExpander
 from agents import Agents
@@ -23,7 +22,6 @@ import streamlit as st
 # Load environment variables
 env_file_path = './multi_agents_system/src/.env'
 load_dotenv(dotenv_path=env_file_path)
-LANGTRACE_API_KEY = os.getenv("LANGTRACE_API_KEY")
 # Setup directories
 input_dir = "multi_agents_system/src/tools/data/inputs"
 gdpr_dir = 'multi_agents_system/src/tools/data/documents'
@@ -49,7 +47,7 @@ def setup_page():
 def sidebar_configuration(disabled):
     st.sidebar.title("Configuration")
     st.sidebar.markdown("### Select LLM")
-    llm_options = ["GPT-4o",  'claude-3-5-sonnet-20240620', 'gemini-1.5-pro']
+    llm_options = ["GPT-4o",  'cCaude-3-5-Sonnet-20240620', 'Gemini-1.5-Pro']
     selected_llm = st.sidebar.selectbox("Choose LLM", llm_options, index=0, disabled=disabled, key="llm_selectbox")
     selected_llm = selected_llm.lower()
     st.session_state.model_name = selected_llm
@@ -157,7 +155,6 @@ def create_agentic_crew(model_name, api_key, manager_llm):
 
 def main():
     setup_page()
-    langtrace.init(api_key=LANGTRACE_API_KEY)
     st.sidebar.info("Sidebar configuration will be enabled after files are uploaded.")
     uploaded_files = upload_preliminary_documents()
 
