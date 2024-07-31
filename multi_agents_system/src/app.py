@@ -47,7 +47,7 @@ def setup_page():
 def sidebar_configuration(disabled):
     st.sidebar.title("Configuration")
     st.sidebar.markdown("### Select LLM")
-    llm_options = ["GPT-4o",  'cCaude-3-5-Sonnet-20240620', 'Gemini-1.5-Pro']
+    llm_options = ["GPT-4o",  'Claude-3-5-Sonnet-20240620', 'Gemini-1.5-Pro']
     selected_llm = st.sidebar.selectbox("Choose LLM", llm_options, index=0, disabled=disabled, key="llm_selectbox")
     selected_llm = selected_llm.lower()
     st.session_state.model_name = selected_llm
