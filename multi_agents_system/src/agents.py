@@ -29,7 +29,7 @@ class Agents:
       # Define the llm model to run agent with
         if self.model_name in ["gpt-4o"]:
             self.llm = ChatOpenAI(model=self.model_name, api_key=self.api_key, temperature=0)
-        elif self.model_name in ['claude-3-opus-20240229']:
+        elif self.model_name in ['claude-3-5-sonnet-20240620']:
             self.llm = ChatAnthropic(model_name=self.model_name, api_key=self.api_key, temperature=0)
         elif self.model_name in ['gemini-1.5-pro']:
             self.llm = ChatGoogleGenerativeAI(model=f'models/{self.model_name}', api_key=self.api_key, temperature=0)
@@ -52,6 +52,7 @@ class Agents:
             ],
             verbose=True,
             llm=self.llm,
+            max_rpm=None,
         )
 
     def research_agent(self):
@@ -69,7 +70,9 @@ class Agents:
                 self.scrape_tool,
                 ],
             verbose=True,
-            llm=self.llm
+            cache=True,
+            llm=self.llm,
+            max_rpm=None,
         )
 
     def requirement_development_agent(self):
@@ -85,7 +88,9 @@ class Agents:
                 'With prowness of bridging the gap between business and technology'
             ),
             verbose=True,
-            llm=self.llm
+            cache=True,
+            llm=self.llm,
+            max_rpm=None,
         )
 
     def compliance_agent(self):
@@ -102,7 +107,10 @@ class Agents:
                 self.gdpr_semantic_search_tool
             ],
             verbose=True,
-            llm=self.llm
+            cache=True,
+            llm=self.llm,
+            max_rpm=None,
+
         )
 
     def data_dictionary_agent(self):
@@ -116,7 +124,9 @@ class Agents:
                 'Your current project focuses on creating a comprehensive data dictionary for a new application, ensuring data integrity and consistency.'
             ),
             verbose=True,
-            llm=self.llm
+            cache=True,
+            llm=self.llm,
+            max_rpm=None,
         )
 
     def quality_assurance_agent(self):
@@ -134,7 +144,9 @@ class Agents:
                 self.scrape_tool,
             ],
             verbose=True,
-            llm=self.llm
+            cache=True,
+            llm=self.llm,
+            max_rpm=None,
         )
 
     def project_management_agent(self):
@@ -148,5 +160,7 @@ class Agents:
                 'Your current assignment is to ensure that a new project is planned and executed efficiently, meeting all deadlines and objectives'
             ),
             verbose=True,
-            llm=self.llm
+            cache=True,
+            llm=self.llm,
+            max_rpm=None,
         )

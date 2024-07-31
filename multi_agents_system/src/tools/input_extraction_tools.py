@@ -52,9 +52,9 @@ class InputExtractionTools:
         if self.model_name in ["gpt-4o"]:
             self.llm = OpenAI(model=self.model_name, api_key=self.api_key)
             self.embed_model = OpenAIEmbedding(model='text-embedding-3-small', api_key=self.api_key)
-        elif self.model_name in ['claude-3-opus-20240229']:
+        elif self.model_name in ['claude-3-5-sonnet-20240620']:
             self.llm = Anthropic(model=self.model_name, api_key=self.api_key, temperature=0)
-            self.embed_model = VoyageEmbedding(model_name='voyage-large-2-instruct', voyage_api_key=vogage_api_key)
+            self.embed_model = VoyageEmbedding(model_name='voyage-large-2', voyage_api_key=vogage_api_key)
         elif self.model_name in ['gemini-1.5-pro']:
             self.llm = Gemini(model=f'models/{self.model_name}', api_key=self.api_key, temperature=0)
             self.embed_model = GeminiEmbedding(model_name='models/embedding-001', api_key=self.api_key)
@@ -107,7 +107,7 @@ class InputExtractionTools:
         # Check the model name and add the appropriate suffix
         if self.model_name in ["gpt-4o"]:
             collection_name_suffix = "openai"
-        elif self.model_name in ['claude-3-opus-20240229']:
+        elif self.model_name in ['claude-3-5-sonnet-20240620']:
             collection_name_suffix = "claude"
         elif self.model_name in ["gemini-1.5-pro"]:
             collection_name_suffix = "gemini"

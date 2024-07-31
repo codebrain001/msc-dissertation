@@ -149,7 +149,7 @@ class AgentTasks:
             ),
             context=[requirement_development_task, compliance_task],
             agent=self.data_dictionary_agent,
-            async_execution=True,
+            # async_execution=True,
             output_file=f"{self.base_output_path}/data_dictionary.md",
         )
 
@@ -179,7 +179,7 @@ class AgentTasks:
             ),
             context=[requirement_development_task, compliance_task],
             agent=self.quality_assurance_agent,
-            async_execution=True,
+            # async_execution=True,
             output_file=f"{self.base_output_path}/final_BRD.md",
         )
 
