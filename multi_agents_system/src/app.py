@@ -5,7 +5,6 @@ import time
 import csv
 import logging
 import nest_asyncio
-from langtrace_python_sdk import langtrace
 
 from utils import StreamToExpander
 from agents import Agents
@@ -14,16 +13,12 @@ from tools.search_and_scrape_tools import SearchAndScrapeTools
 from tools.compliance_tools import ComplianceTools
 from tasks import AgentTasks
 
-from crewai import Crew, Process
-from langchain_openai import ChatOpenAI
-from langchain_anthropic import ChatAnthropic
-from langchain_google_genai import ChatGoogleGenerativeAI
+from crewai import Crew
 import streamlit as st
 
 # Load environment variables
 env_file_path = './multi_agents_system/src/.env'
 load_dotenv(dotenv_path=env_file_path)
-LANGTRACE_API_KEY = os.getenv("LANGTRACE_API_KEY")
 # Setup directories
 input_dir = "multi_agents_system/src/tools/data/inputs"
 gdpr_dir = 'multi_agents_system/src/tools/data/documents'
@@ -49,7 +44,7 @@ def setup_page():
 def sidebar_configuration(disabled):
     st.sidebar.title("Configuration")
     st.sidebar.markdown("### Select LLM")
-    llm_options = ["GPT-4o",  'claude-3-5-sonnet-20240620', 'gemini-1.5-pro']
+    llm_options = ["GPT-4o",  'Claude-3-5-Sonnet-20240620', 'Gemini-1.5-Pro']
     selected_llm = st.sidebar.selectbox("Choose LLM", llm_options, index=0, disabled=disabled, key="llm_selectbox")
     selected_llm = selected_llm.lower()
     st.session_state.model_name = selected_llm
@@ -79,25 +74,10 @@ def upload_preliminary_documents():
             st.toast(f"Uploaded and saved: {uploaded_file.name}")
     return uploaded_files
 
-def initialize_manager_llm(model_name, api_key):
-    try:
-        if model_name == "gpt-4o":
-            return ChatOpenAI(model=model_name, api_key=api_key, temperature=0)
-        elif model_name == 'claude-3-5-sonnet-20240620':
-            return ChatAnthropic(model=model_name, api_key=api_key, temperature=0)
-        elif model_name == 'gemini-1.5-pro':
-            return ChatGoogleGenerativeAI(model=f'models/{model_name}', api_key=api_key, temperature=0)
-        else:
-            st.error(f'Unsupported model name: {model_name}')
-            return None
-    except Exception as e:
-        st.error(f"Error initializing manager LLM: {e}")
-        return None
-
-def create_agentic_crew(model_name, api_key, manager_llm):
+def create_agentic_crew(model_name, api_key):
     search_and_scrape_tools = SearchAndScrapeTools()
     compliance_tools = ComplianceTools(input_dir=gdpr_dir, model_name=model_name, api_key=api_key, load_collection_status=True)
-    input_extraction_tools = InputExtractionTools(input_dir=input_dir, model_name=model_name, api_key=api_key, load_collection_status=True)
+    input_extraction_tools = InputExtractionTools(input_dir=input_dir, model_name=model_name, api_key=api_key, load_collection_status=False)
 
     agents = Agents(model_name, api_key, input_extraction_tools, search_and_scrape_tools, compliance_tools)
     preliminary_requirement_profiling_agent = agents.preliminary_requirement_profiling_agent()
@@ -148,16 +128,13 @@ def create_agentic_crew(model_name, api_key, manager_llm):
             quality_assurance_task,
             project_management_task,
         ],
-        process=Process.hierarchical,
-        verbose=True,
-        memory=True,
-        manager_llm=manager_llm,
+        verbose=2,
+        memory=True
     )
     return requirement_analysis_and_specification_crew
 
 def main():
     setup_page()
-    langtrace.init(api_key=LANGTRACE_API_KEY)
     st.sidebar.info("Sidebar configuration will be enabled after files are uploaded.")
     uploaded_files = upload_preliminary_documents()
 
@@ -167,10 +144,7 @@ def main():
             start_time = time.time()
             st.toast('Agentic Workflow Execution started...')
             st.info('The agentic workflow will start after the uploaded document is indexed in the vector store.',  icon="1️⃣")
-
-            manager_llm = initialize_manager_llm(model_name, api_key)
-            requirement_analysis_and_specification_crew = create_agentic_crew(model_name, api_key, manager_llm)
-
+            requirement_analysis_and_specification_crew = create_agentic_crew(model_name, api_key)
             with st.spinner('Indexing Uploaded document...'):
                 time.sleep(15)
             with st.status("🤖 **Agents at work...**", state="running", expanded=True) as status:

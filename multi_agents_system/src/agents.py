@@ -70,7 +70,6 @@ class Agents:
                 self.scrape_tool,
                 ],
             verbose=True,
-            cache=True,
             llm=self.llm,
             max_rpm=None,
         )
@@ -88,7 +87,6 @@ class Agents:
                 'With prowness of bridging the gap between business and technology'
             ),
             verbose=True,
-            cache=True,
             llm=self.llm,
             max_rpm=None,
         )
@@ -107,10 +105,8 @@ class Agents:
                 self.gdpr_semantic_search_tool
             ],
             verbose=True,
-            cache=True,
             llm=self.llm,
             max_rpm=None,
-
         )
 
     def data_dictionary_agent(self):
@@ -124,7 +120,6 @@ class Agents:
                 'Your current project focuses on creating a comprehensive data dictionary for a new application, ensuring data integrity and consistency.'
             ),
             verbose=True,
-            cache=True,
             llm=self.llm,
             max_rpm=None,
         )
@@ -144,7 +139,6 @@ class Agents:
                 self.scrape_tool,
             ],
             verbose=True,
-            cache=True,
             llm=self.llm,
             max_rpm=None,
         )
@@ -160,7 +154,6 @@ class Agents:
                 'Your current assignment is to ensure that a new project is planned and executed efficiently, meeting all deadlines and objectives'
             ),
             verbose=True,
-            cache=True,
             llm=self.llm,
             max_rpm=None,
         )
