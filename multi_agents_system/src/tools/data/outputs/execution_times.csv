@@ -2,3 +2,6 @@ Model Name,Execution Time (seconds)
 gpt-4o,615.61
 claude-3-5-sonnet-20240620,478.76
 gemini-1.5-pro,1480.03
+gpt-4o,725.13
+claude-3-5-sonnet-20240620,822.62
+gemini-1.5-pro,8494.69

@@ -1,79 +1,42 @@
-```markdown
 # Comprehensive Data Dictionary for Emotion Detection Application
 
-## Metadata
+## Introduction
+This document provides a comprehensive data dictionary for the emotion detection application, which aims to detect user emotions through voice, text, and facial expressions, and provide tailored responses and advertisements based on detected emotions. The data dictionary ensures data integrity and consistency, aligning with the project requirements and compliance measures, including GDPR compliance.
 
-| Attribute Name          | Description                                                                 | Source                          | Notes                                                                 |
-|-------------------------|-----------------------------------------------------------------------------|---------------------------------|----------------------------------------------------------------------|
-| user_id                 | Unique identifier for a user                                                | Application Database            | Must be unique across the system                                      |
-| voice_input             | Audio input from the user for emotion detection                             | User                            | Stored temporarily for processing                                    |
-| text_input              | Text input from the user for emotion detection                              | User                            | Stored temporarily for processing                                    |
-| facial_expression_input | Image or video input for facial expression recognition                      | User                            | Stored temporarily for processing                                    |
-| detected_emotion        | Emotion detected from the user's input                                      | Emotion Detection API           | Includes emotions like happiness, sadness, anger                     |
-| tailored_response       | Response generated based on the detected emotion                            | Response Generation Algorithm   | Contextually relevant and empathetic responses                       |
-| personalized_ad         | Advertisement tailored to the user's emotional state                        | Ad Selection Algorithm          | Non-intrusive and relevant ads                                        |
-| consent_status          | Status of user's consent for data processing                                | Consent Management System       | Explicit consent required                                            |
-| data_encryption_status  | Status indicating if the user's data is encrypted                           | Security Module                 | AES-256 encryption                                                   |
-| data_retention_period   | Duration for which the user's data will be retained                         | Data Retention Policy           | Complies with GDPR and CCPA                                          |
+## Pydantic Models
+Pydantic is a data validation and settings management library for Python, leveraging Python type annotations. It ensures that data conforms to specified types and validation rules, making it ideal for defining and validating data attributes in our application.
 
-## Data Types and Formats
+## Data Attributes
 
-| Attribute Name          | Data Type | Format            | Maximum Length | Minimum Length | Allowed Values | Nullable | Default Value | Constraints   |
-|-------------------------|-----------|-------------------|----------------|----------------|----------------|----------|---------------|---------------|
-| user_id                 | string    | UUID format       | 36             | 36             | UUID format    | false    | null          | Must be unique|
-| voice_input             | binary    | Audio file        | N/A            | N/A            | N/A            | true     | null          | N/A           |
-| text_input              | string    | UTF-8             | 5000           | 1              | N/A            | true     | null          | N/A           |
-| facial_expression_input | binary    | Image/Video file  | N/A            | N/A            | N/A            | true     | null          | N/A           |
-| detected_emotion        | string    | Enum              | 20             | 3              | happiness, sadness, anger | false | null | N/A |
-| tailored_response       | string    | UTF-8             | 1000           | 1              | N/A            | false    | null          | N/A           |
-| personalized_ad         | string    | URL               | 2048           | 1              | URL format     | false    | null          | N/A           |
-| consent_status          | boolean   | true/false        | N/A            | N/A            | true, false    | false    | false         | N/A           |
-| data_encryption_status  | boolean   | true/false        | N/A            | N/A            | true, false    | false    | true          | N/A           |
-| data_retention_period   | integer   | Days              | 3650           | 1              | 1-3650         | false    | 365           | N/A           |
+| Attribute Name       | Data Type   | Format          | Validation Rules                          | Relationships                  | Metadata                                      | Compliance Attributes                        |
+|----------------------|-------------|-----------------|-------------------------------------------|--------------------------------|-----------------------------------------------|----------------------------------------------|
+| user_id              | UUID        | uuid4           | Must be a valid UUID                      | Primary Key                    | Unique identifier for each user               | Pseudonymized data                           |
+| emotion_detected     | Enum        | ['happy', 'sad', 'angry', 'neutral'] | Must be one of the predefined emotions    | Foreign Key to Emotion Table   | Detected emotion from user input              | Special category data, requires explicit consent |
+| timestamp            | datetime    | ISO 8601        | Must be a valid datetime                  |                                | Time when the emotion was detected            |                                              |
+| voice_data           | bytes       | base64          | Must be base64 encoded                    |                                | Raw voice data                                | Special category data, requires explicit consent |
+| text_data            | str         |                 | Must be a non-empty string                |                                | Raw text data                                 | Special category data, requires explicit consent |
+| facial_expression    | str         | base64          | Must be base64 encoded image              |                                | Raw facial expression data                    | Special category data, requires explicit consent |
+| response_generated   | str         |                 | Must be a non-empty string                |                                | Response generated based on detected emotion  |                                              |
+| advertisement_shown  | str         | URL             | Must be a valid URL                       |                                | URL of the advertisement shown                |                                              |
+| consent_given        | bool        |                 | Must be True                              |                                | Indicates if user has given consent           | GDPR compliance                              |
+| user_preferences     | JSON        |                 | Must be a valid JSON                      |                                | User preferences for tailored responses       |                                              |
 
-## Validation Rules
+## Compliance Requirements Summary
+- **Explicit Consent**: Ensure explicit consent is obtained for processing special category data such as emotions, voice, text, and facial expressions.
+- **Data Protection**: Implement robust security measures to protect user data.
+- **Pseudonymization**: Use pseudonymization techniques for user identifiers to enhance privacy.
+- **GDPR Compliance**: Adhere to GDPR guidelines for data processing, storage, and user rights.
 
-| Attribute Name          | Validation Rules                                                                 |
-|-------------------------|----------------------------------------------------------------------------------|
-| user_id                 | Must be a valid UUID                                                             |
-| voice_input             | Must be a valid audio file format (e.g., WAV, MP3)                               |
-| text_input              | Must be a valid UTF-8 string                                                     |
-| facial_expression_input | Must be a valid image or video file format (e.g., JPEG, PNG, MP4)                |
-| detected_emotion        | Must be one of the allowed values: happiness, sadness, anger                     |
-| tailored_response       | Must be a valid UTF-8 string                                                     |
-| personalized_ad         | Must be a valid URL                                                              |
-| consent_status          | Must be true or false                                                            |
-| data_encryption_status  | Must be true or false                                                            |
-| data_retention_period   | Must be an integer between 1 and 3650                                            |
+## Relationships Between Attributes
+- `user_id` serves as the primary key and is linked to all other attributes to uniquely identify user data.
+- `emotion_detected` is linked to the Emotion Table, which contains predefined emotions.
+- `consent_given` is a critical attribute ensuring that data processing complies with GDPR requirements.
 
-## Relationships
+## Final Review
+This document has been reviewed to ensure that all data attributes are covered as per the BRD draft. The data dictionary aligns with the project requirements and compliance measures, providing a structured and comprehensive overview of the data attributes.
 
-| Attribute Name          | Related To              | Relationship Type |
-|-------------------------|-------------------------|-------------------|
-| user_id                 | voice_input             | One-to-Many       |
-| user_id                 | text_input              | One-to-Many       |
-| user_id                 | facial_expression_input | One-to-Many       |
-| user_id                 | detected_emotion        | One-to-Many       |
-| user_id                 | tailored_response       | One-to-Many       |
-| user_id                 | personalized_ad         | One-to-Many       |
-| user_id                 | consent_status          | One-to-One        |
-| user_id                 | data_encryption_status  | One-to-One        |
-| user_id                 | data_retention_period   | One-to-One        |
+By following this data dictionary, we can ensure data integrity, consistency, and compliance throughout the project.
 
-## Compliance Attributes
+---
 
-| Attribute Name          | Regulatory Requirement | Description                                                                 |
-|-------------------------|------------------------|-----------------------------------------------------------------------------|
-| consent_status          | GDPR, CCPA             | Explicit consent from users for data processing                             |
-| data_encryption_status  | GDPR, CCPA             | Ensures that user data is encrypted using AES-256                           |
-| data_retention_period   | GDPR, CCPA             | Specifies the duration for which user data will be retained                 |
-| user_id                 | GDPR, CCPA             | Unique identifier for users, considered personal data                       |
-| voice_input             | GDPR, CCPA             | Audio input from users, considered personal data                            |
-| text_input              | GDPR, CCPA             | Text input from users, considered personal data                             |
-| facial_expression_input | GDPR, CCPA             | Image or video input from users, considered personal data                   |
-| detected_emotion        | GDPR, CCPA             | Emotion detected from user input, considered sensitive personal data        |
-| tailored_response       | GDPR, CCPA             | Response generated based on detected emotion, considered personal data      |
-| personalized_ad         | GDPR, CCPA             | Advertisement tailored to user's emotional state, considered personal data   |
-
-This comprehensive data dictionary ensures data integrity, consistency, and compliance with GDPR, CCPA, and other relevant regulations. It provides a solid foundation for effective data management and governance throughout the project.
-```
+This comprehensive data dictionary should serve as a valuable resource for the development and management of the emotion detection application, ensuring that all data attributes are well-defined, validated, and compliant with relevant regulations.

@@ -13,7 +13,10 @@ from tools.search_and_scrape_tools import SearchAndScrapeTools
 from tools.compliance_tools import ComplianceTools
 from tasks import AgentTasks
 
-from crewai import Crew
+from crewai import Crew, Process
+from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
+from langchain_google_genai import ChatGoogleGenerativeAI
 import streamlit as st
 
 # Load environment variables
@@ -74,7 +77,22 @@ def upload_preliminary_documents():
             st.toast(f"Uploaded and saved: {uploaded_file.name}")
     return uploaded_files
 
-def create_agentic_crew(model_name, api_key):
+def initialize_manager_llm(model_name, api_key):
+    try:
+        if model_name == "gpt-4o":
+            return ChatOpenAI(model=model_name, api_key=api_key, temperature=0)
+        elif model_name == 'claude-3-5-sonnet-20240620':
+            return ChatAnthropic(model=model_name, api_key=api_key, temperature=0)
+        elif model_name == 'gemini-1.5-pro':
+            return ChatGoogleGenerativeAI(model=f'models/{model_name}', api_key=api_key, temperature=0)
+        else:
+            st.error(f'Unsupported model name: {model_name}')
+            return None
+    except Exception as e:
+        st.error(f"Error initializing manager LLM: {e}")
+        return None
+
+def create_agentic_crew(model_name, api_key, manager_llm):
     search_and_scrape_tools = SearchAndScrapeTools()
     compliance_tools = ComplianceTools(input_dir=gdpr_dir, model_name=model_name, api_key=api_key, load_collection_status=True)
     input_extraction_tools = InputExtractionTools(input_dir=input_dir, model_name=model_name, api_key=api_key, load_collection_status=False)
@@ -128,8 +146,10 @@ def create_agentic_crew(model_name, api_key):
             quality_assurance_task,
             project_management_task,
         ],
-        verbose=2,
-        memory=True
+        verbose=True,
+        memory=True,
+        process=Process.hierarchical,
+        manager_llm=manager_llm
     )
     return requirement_analysis_and_specification_crew
 
@@ -144,7 +164,8 @@ def main():
             start_time = time.time()
             st.toast('Agentic Workflow Execution started...')
             st.info('The agentic workflow will start after the uploaded document is indexed in the vector store.',  icon="1️⃣")
-            requirement_analysis_and_specification_crew = create_agentic_crew(model_name, api_key)
+            manager_llm = initialize_manager_llm(model_name, api_key)
+            requirement_analysis_and_specification_crew = create_agentic_crew(model_name, api_key, manager_llm)
             with st.spinner('Indexing Uploaded document...'):
                 time.sleep(15)
             with st.status("🤖 **Agents at work...**", state="running", expanded=True) as status:

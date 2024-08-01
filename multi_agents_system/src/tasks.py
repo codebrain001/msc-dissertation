@@ -69,7 +69,7 @@ class AgentTasks:
                 "   - Analysis of technology adoption trends, innovation drivers, and potential technological disruptions.\n"
                 "4. **Opportunities and Threats**:\n"
                 "   - Identification of market opportunities and potential threats.\n"
-                "Ensure that each section provides comprehensive and detailed analysis and insights relevant to the Emotion Detection and Recognition (EDR) market."
+                "Ensure that each section provides comprehensive and detailed analysis and insights relevant to information extracted from the preliminary profiling task."
             ),
             agent=self.research_agent,
             context=[preliminary_profiling_task],
