@@ -14,7 +14,9 @@ claude_sonnet_output_set = aggregate_model_outputs('../tools/data/outputs/claude
 gpt4o_output_set = aggregate_model_outputs('../tools/data/outputs/gpt-4o')
 gemini_pro_output_set = aggregate_model_outputs('../tools/data/outputs/gemini-1.5-pro')
 
-model = LiteLLM("ollama/vicgalle/prometheus-7b-v2.0")
+hf_token = os.getenv("HUGGINGFACE_API_KEY")
+os.environ["HUGGINGFACE_API_KEY"] = hf_token
+model = LiteLLM('huggingface/prometheus-eval/prometheus-7b-v2.0')
 judge = PrometheusEval(model=model)
 
 input_file_path = "../tools/data/test_document/Meeting_Notes_001.pdf"
