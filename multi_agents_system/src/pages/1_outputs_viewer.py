@@ -35,7 +35,7 @@ def main(model_name):
         "market_research_document.md",
         "BRD_draft.md",
         "compliance_report.md",
-        "data_dictionary.json",
+        "data_dictionary.md",
         "project_plan.md",
         "final_BRD.md",
     ]
@@ -46,8 +46,6 @@ def main(model_name):
                 content = load_file_to_display(file_path)
                 if file_name.endswith('.md'):
                     st.markdown(content)
-                elif file_name.endswith('.json'):
-                    st.json(json.loads(content))
                 else:
                     st.write(content)
         else:
