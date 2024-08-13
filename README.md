@@ -1,36 +1,12 @@
-# Masters Project: Fine-tuning Open-source LLM for Multi-Agent Software Requirement Analysis and Specification
+# Masters Project: Utilising LLM agents for requirement analysis and specification from preliminary meeting notes
 
 ## Project Overview
 
 ### Aim
-The project aims to develop and fine-tune an open-source large language model (LLM) to automate and enhance the software requirement analysis and specification process using a multi-agent system
-
-### Research Question
-How can LLMs be fine-tuned and utilized within a multi-agent system to automate and enhance the software requirement analysis and specification process in project development?
+The primary aim of this dissertation is to investigate the effectiveness of LLM agents in aiding requirement analysis and specification from preliminary meeting notes in software engineering projects. 
 
 ### Objectives
-1. **Dataset Preparation**
-   - Collect and preprocess datasets on business analysis, software requirements, UK regulations, and ethics.
-2. **Fine-tuning**
-   - Fine-tune an open-source LLM on the prepared datasets (Susnjak et al., 2024; Zheng et al., 2024).
-3. **Build Multi-Agent System**
-   - Develop an agents system specializing in requirements (He et al., 2023).
-4. **Deployment of the System**
-   - Deploy the multi-agent system (Pillai and Thakur, 2024).
-5. **Human Evaluation**
-   - Conduct human evaluation using the Likert scale (Nemoto and Beglar, 2014).
-
-### Practical Outcomes
-- Curate and prepare datasets for domain-specific LLM fine-tuning.
-- Customize the LLM based on the prepared dataset.
-- Develop an agent system for requirement extraction, classification, analysis, validation, and specification.
-- Perform a comprehensive assessment of system performance and gather user feedback.
-- Write and submit a dissertation report.
-
-
-## References
-- He, J., Treude, C. and Lo, D., 2024. LLM-Based Multi-Agent Systems for Software Engineering: Vision and the Road Ahead. arXiv preprint arXiv:2404.04834.
-- Nemoto, T. and Beglar, D., 2014, November. Likert-scale questionnaires. In JALT 2013 conference proceedings (pp. 1-8)
-- Pillai, M. and Thakur, P., 2024, January. Developing a Website to Analyze and Validate Projects Using LangChain and Streamlit. In 2024 2nd International Conference on Intelligent Data Communication Technologies and Internet of Things (IDCIoT) (pp. 1493-1501). IEEE.
-- Susnjak, T., Hwang, P., Reyes, N.H., Barczak, A.L., McIntosh, T.R. and Ranathunga, S., 2024. Automating research synthesis with domain-specific large language model fine-tuning. arXiv preprint arXiv:2404.08680
-- Zheng, J., Hong, H., Wang, X., Su, J., Liang, Y. and Wu, S., 2024. Fine-tuning Large Language Models for Domain-specific Machine Translation. arXiv preprint arXiv:2402.15061
+1.	**Evaluate Efficiency and Accuracy**: To assess the efficiency and accuracy of multi-agent system powered by different LLMs in requirement analysis and generated requirement specifications. This also involves if the business requirement specifications generated is GDPR-compliant and a comparative analysis of these generated documents across the different LLM utilized. 
+2.	**Measure Quality and Time**: To evaluate the quality of outputs from agentic workflows and the time taken for requirement analysis and specification processes. This entails assessing the quality of requirement specifications produced by LLM agents using established and predefined criteria via human evaluation and LLM-as-a-Judge. This will provide insights into LLMs' operational benefits, time-saving potential and user satisfaction in requirement engineering.
+3.	**Develop and Experiment**: To develop an application that integrates the various components of the proposed agentic system and using version control system to track changes in the Application Programming Interface (APIs), source code, prompts and outputs across various experiments. This involves creating a user-friendly interface and ensuring seamless interaction between the multi-agents system and users. 
+4.	**Complete Dissertation and Product Development**: To complete the dissertation writing and product development within the stipulated period. This ensures that all research activities and reporting are completed within the academic timeline. The dissertation will be written in parallel with product development, ensuring both the written document and the functional prototype are finalized by the end of the dissertation period. Periodic reviews and revisions will maintain the quality and relevance of the research output.
